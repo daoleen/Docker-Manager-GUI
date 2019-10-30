@@ -1,4 +1,4 @@
-package org.finbear.generator.docker.domain;
+package me.sunny.generator.docker.domain;
 
 
 import java.util.Set;

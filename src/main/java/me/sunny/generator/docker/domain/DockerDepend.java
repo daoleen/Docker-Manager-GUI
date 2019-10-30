@@ -1,8 +1,8 @@
-package org.finbear.generator.docker.domain;
+package me.sunny.generator.docker.domain;
 
 
 import lombok.*;
-import org.finbear.generator.docker.enums.DockerDependCondition;
+import me.sunny.generator.docker.enums.DockerDependCondition;
 
 
 @Getter

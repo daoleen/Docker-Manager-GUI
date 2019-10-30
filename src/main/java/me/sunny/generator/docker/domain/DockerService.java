@@ -1,11 +1,11 @@
-package org.finbear.generator.docker.domain;
+package me.sunny.generator.docker.domain;
 
 
 import java.util.Map;
 import java.util.Set;
 
 import lombok.*;
-import org.finbear.generator.docker.enums.DockerRestartOption;
+import me.sunny.generator.docker.enums.DockerRestartOption;
 
 
 @Getter

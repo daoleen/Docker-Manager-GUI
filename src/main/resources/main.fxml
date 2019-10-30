@@ -5,7 +5,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="mainContainer" alignment="CENTER" minHeight="100.0" minWidth="300.0" prefHeight="469.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.finbear.generator.docker.controller.MainController">
+<VBox fx:id="mainContainer" alignment="CENTER" minHeight="100.0" minWidth="300.0" prefHeight="469.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.sunny.generator.docker.controller.MainController">
    <children>
       <TextField id="txtDockerComposeVersion" alignment="TOP_LEFT" maxWidth="-Infinity" prefHeight="26.0" prefWidth="82.0" text="2.1" />
       <TableView id="tblComposeServices" prefHeight="468.0" prefWidth="612.0">

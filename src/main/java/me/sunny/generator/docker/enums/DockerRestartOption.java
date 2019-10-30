@@ -1,4 +1,4 @@
-package org.finbear.generator.docker.enums;
+package me.sunny.generator.docker.enums;
 
 
 public enum DockerRestartOption {

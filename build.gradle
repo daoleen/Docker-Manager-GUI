@@ -14,8 +14,8 @@ plugins {
     id 'maven'
 }
 
-group 'org.finbear'
-version '1.0.0-RELEASE'
+group 'me.sunny'
+version '1.0.1-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
@@ -38,7 +38,7 @@ apply plugin: 'javafx-gradle-plugin'
 
 jfx {
     verbose = true
-    mainClass = "org.finbear.generator.docker.Main"
+    mainClass = "me.sunny.generator.docker.Main"
     jfxAppOutputDir = "build/jfx/app"
     jfxMainAppJarName = "docker-compose-generator.jar"
     deployDir = "src/main/deploy"

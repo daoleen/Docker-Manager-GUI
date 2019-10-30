@@ -1,4 +1,4 @@
-package org.finbear.generator.docker;
+package me.sunny.generator.docker;
 
 
 import javafx.application.Application;
