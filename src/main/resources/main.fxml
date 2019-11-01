@@ -5,8 +5,28 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.MenuBar?>
+
+
 <VBox fx:id="mainContainer" alignment="CENTER" minHeight="100.0" minWidth="300.0" prefHeight="469.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.sunny.generator.docker.controller.MainController">
    <children>
+       <MenuBar VBox.vgrow="NEVER">
+           <menus>
+               <Menu mnemonicParsing="false" text="File">
+                   <items>
+                       <MenuItem fx:id="mnuServiceCreate" mnemonicParsing="false" onAction="#openServiceCreateWindow" text="Create a new service" />
+                       <MenuItem fx:id="mnuQuit" mnemonicParsing="false" onAction="#quit" text="Quit" />
+                   </items>
+               </Menu>
+               <Menu mnemonicParsing="false" text="Help">
+                   <items>
+                       <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+                   </items>
+               </Menu>
+           </menus>
+       </MenuBar>
       <TextField id="txtDockerComposeVersion" alignment="TOP_LEFT" maxWidth="-Infinity" prefHeight="26.0" prefWidth="82.0" text="2.1" />
       <TableView id="tblComposeServices" prefHeight="468.0" prefWidth="612.0">
         <columns>

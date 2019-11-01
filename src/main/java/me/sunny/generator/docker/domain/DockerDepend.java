@@ -13,4 +13,10 @@ import me.sunny.generator.docker.enums.DockerDependCondition;
 public class DockerDepend {
     private DockerService service;
     private DockerDependCondition condition;
+
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s)", service, condition);
+    }
 }
