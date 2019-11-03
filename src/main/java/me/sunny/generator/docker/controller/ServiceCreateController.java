@@ -2,20 +2,18 @@ package me.sunny.generator.docker.controller;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -30,8 +28,6 @@ import me.sunny.generator.docker.domain.*;
 import me.sunny.generator.docker.enums.DockerDependCondition;
 import me.sunny.generator.docker.enums.DockerRestartOption;
 import org.apache.commons.lang3.StringUtils;
-
-import static me.sunny.generator.docker.controller.MainController.showNotificationDialog;
 
 
 @Slf4j
@@ -191,9 +187,9 @@ public class ServiceCreateController {
 
     private void initServicesCombo() {
         services.addAll(
-                new DockerService("Test service 1", "Test image", "v", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek()),
-                new DockerService("Test service 2", "Test image", "v", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek()),
-                new DockerService("Test service 3", "Test image", "v", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek())
+                new DockerService("Test service 1", "Test image", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek()),
+                new DockerService("Test service 2", "Test image", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek()),
+                new DockerService("Test service 3", "Test image", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek())
         );
 
         selLinks.setItems(services);
@@ -373,28 +369,29 @@ public class ServiceCreateController {
             healthchek = new DockerHealthchek(txtHealthcheckCommamd.getText(), interval, timeout, retries);
         }
 
-        Context.createdService = new DockerService(txtName.getText(), txtImage.getText(), "", "", restartOption, portMappings,
+        DockerService createdService = new DockerService(txtName.getText(), txtImage.getText(), "", restartOption, portMappings,
                         volumeMappings, environmentVars, dependServices, linkServices, healthchek);
 
-        openDetailsWindow(Context.createdService);
+        Context.project.getAvailableServices().add(new DockerServiceDescription(createdService));
+        openDetailsWindow(createdService.getName());
     }
 
 
-    private void openDetailsWindow(DockerService createdService) {
+    private void openDetailsWindow(String serviceName) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("service/details.fxml"));
             Stage serviceDetailsStage = new Stage();
             serviceDetailsStage.initModality(Modality.WINDOW_MODAL);
-            serviceDetailsStage.setTitle(createdService.getName());
+            serviceDetailsStage.setTitle(serviceName);
             serviceDetailsStage.setScene(new Scene(fxmlLoader.load()));
             ServiceDetailsController serviceDetailsController = fxmlLoader.<ServiceDetailsController>getController();
-            serviceDetailsController.init(createdService);
+            serviceDetailsController.init(serviceName);
             serviceDetailsStage.show();
 
             ((Stage) txtName.getScene().getWindow()).close();
         } catch (IOException ex) {
             log.error("Could not open window for details of service: {}", ex.getMessage());
-            showNotificationDialog("Error", "Could not open window for details of service", Alert.AlertType.ERROR);
+            Context.showNotificationDialog("Error", "Could not open window for details of service", Alert.AlertType.ERROR);
         }
     }
 

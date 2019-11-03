@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.sunny.generator.docker.controller.ServiceDetailsController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.0" minWidth="10.0" prefWidth="99.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.0" minWidth="10.0" prefWidth="348.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.0" minWidth="10.0" prefWidth="146.0" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="41.0" minHeight="10.0" prefHeight="11.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="115.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="193.0" minHeight="30.0" prefHeight="100.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="222.0" minHeight="30.0" prefHeight="100.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="78.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="113.0" minHeight="30.0" prefHeight="109.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="118.0" minHeight="30.0" prefHeight="113.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="192.0" minHeight="10.0" prefHeight="152.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="90.0" minHeight="0.0" prefHeight="37.0" vgrow="SOMETIMES" />
+    </rowConstraints>
+   <children>
+      <Label text="Name" />
+      <Label text="Image" GridPane.rowIndex="1" />
+      <Label text="Restart" GridPane.rowIndex="2" />
+      <Label text="Ports" GridPane.rowIndex="3" />
+      <Label text="Volumes" GridPane.rowIndex="4" />
+      <Label text="Links" GridPane.rowIndex="5" />
+      <Label text="Environment" GridPane.rowIndex="6" />
+      <Label text="Depends On" GridPane.rowIndex="7" />
+      <Label text="HealthCheck" GridPane.rowIndex="8" />
+      <Label fx:id="lblName" GridPane.columnIndex="1" />
+      <Label fx:id="lblImage" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Label fx:id="lblRestart" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Label fx:id="lblPorts" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <Label fx:id="lblVolumes" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <Label fx:id="lblLinks" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <Label fx:id="lblEnvironment" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <Label fx:id="lblDepend" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+      <Label fx:id="lblHealthCheck" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+
+      <Label text="Versions" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+      <Label fx:id="lblVersions" alignment="TOP_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="8" GridPane.valignment="TOP">
+         <GridPane.margin>
+            <Insets top="10.0" />
+         </GridPane.margin>
+      </Label>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="9">
+         <children>
+            <Button mnemonicParsing="false" text="Close" onAction="#close">
+               <HBox.margin>
+                  <Insets right="50.0" />
+               </HBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" style="-fx-background-color: #ff5724;" text="Edit Service" textFill="#2f1b1b" onAction="#editService">
+               <HBox.margin>
+                  <Insets right="50.0" />
+               </HBox.margin>
+            </Button>
+            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" style="-fx-background-color: #cbca44;" text="Create New Version" textFill="#04050d" onAction="#createVersion">
+               <HBox.margin>
+                  <Insets right="-150.0" />
+               </HBox.margin></Button>
+         </children></HBox>
+   </children>
+   <padding>
+      <Insets left="5.0" top="5.0" />
+   </padding>
+</GridPane>

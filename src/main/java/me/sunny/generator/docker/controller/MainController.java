@@ -11,6 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.Main;
 
 
@@ -26,16 +27,8 @@ public class MainController {
             serverCreateStage.show();
         } catch (IOException ex) {
             log.error("Could not open window for creating a new service: {}", ex.getMessage());
-            showNotificationDialog("Error", "Could not open window for creating a new service", Alert.AlertType.ERROR);
+            Context.showNotificationDialog("Error", "Could not open window for creating a new service", Alert.AlertType.ERROR);
         }
-    }
-
-
-    public static void showNotificationDialog(String title, String description, Alert.AlertType type) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setContentText(description);
-        alert.showAndWait();
     }
 
 
