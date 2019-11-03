@@ -12,8 +12,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DockerHealthchek {
-    private String[] test;
+    private String test;
     private int intervalSeconds;
     private int timeoutSeconds;
     private int retriesCount;
+
+
+    @Override
+    public String toString() {
+        return String.format("test: %s\ninterval: %ds\ntimeout: %ds\nretries: %d",
+                test, intervalSeconds, timeoutSeconds, retriesCount);
+    }
 }

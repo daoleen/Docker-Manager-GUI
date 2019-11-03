@@ -42,4 +42,8 @@ public class MainController {
     public void quit(ActionEvent actionEvent) {
         Main.exit();
     }
+
+
+    public void about(ActionEvent actionEvent) {
+    }
 }
