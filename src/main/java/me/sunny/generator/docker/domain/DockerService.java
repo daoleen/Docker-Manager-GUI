@@ -16,7 +16,6 @@ import me.sunny.generator.docker.enums.DockerRestartOption;
 public class DockerService {
     private String name;
     private String image;
-    private String version;
     private String buildPath;
     private DockerRestartOption restart;
     private Set<DockerPortMapping> ports;
@@ -29,6 +28,6 @@ public class DockerService {
 
     @Override
     public String toString() {
-        return String.format("%s [%s]", name, version);
+        return String.format("%s [%s]", name, image);
     }
 }

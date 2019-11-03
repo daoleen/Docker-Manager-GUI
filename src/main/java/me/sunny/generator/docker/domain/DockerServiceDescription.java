@@ -10,9 +10,12 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "service")
 public class DockerServiceDescription {
+
+    @NonNull
     private DockerService service;
     private List<String> versions = new ArrayList<>();
 }
