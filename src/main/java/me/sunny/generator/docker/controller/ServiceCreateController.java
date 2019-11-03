@@ -1,6 +1,7 @@
 package me.sunny.generator.docker.controller;
 
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,19 +14,28 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.domain.*;
 import me.sunny.generator.docker.enums.DockerDependCondition;
 import me.sunny.generator.docker.enums.DockerRestartOption;
+import org.apache.commons.lang3.StringUtils;
+
+import static me.sunny.generator.docker.controller.MainController.showNotificationDialog;
 
 
 @Slf4j
-public class ServiceController {
+public class ServiceCreateController {
     private final ObservableList<DockerPortMapping> ports = FXCollections.observableArrayList();
     private final ObservableList<DockerVolumeMapping> volumes = FXCollections.observableArrayList();
     private final ObservableList<DockerService> services = FXCollections.observableArrayList();
@@ -35,6 +45,12 @@ public class ServiceController {
     private final ObservableList<DockerDependCondition> dependConditions = FXCollections.observableArrayList(DockerDependCondition.values());
     private final ObservableList<DockerRestartOption> restartOptions = FXCollections.observableArrayList(DockerRestartOption.values());
 
+
+    @FXML
+    private TextField txtName;
+
+    @FXML
+    private TextField txtImage;
 
     @FXML
     private ComboBox selRestart;
@@ -74,6 +90,9 @@ public class ServiceController {
 
     @FXML
     private ComboBox selDependsCondition;
+
+    @FXML
+    private TextField txtHealthcheckCommamd;
 
     @FXML
     private TextField txtHealthcheckInterval;
@@ -318,6 +337,64 @@ public class ServiceController {
         Object selectedItem = listDepends.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             Platform.runLater(() -> depends.remove(selectedItem));
+        }
+    }
+
+
+    public void save(ActionEvent actionEvent) {
+        DockerRestartOption restartOption = (selRestart.getSelectionModel().getSelectedItem() != null) ?
+                (DockerRestartOption) selRestart.getSelectionModel().getSelectedItem() : null;
+        HashSet<DockerPortMapping> portMappings = new HashSet<>(ports);
+        HashSet<DockerVolumeMapping> volumeMappings = new HashSet<>(volumes);
+        Map<String, String> environmentVars = new HashMap<>(environments.size());
+        environments.forEach(env -> {
+            environmentVars.put(env.getKey(), env.getValue());
+        });
+        HashSet<DockerDepend> dependServices = new HashSet<>(depends);
+        HashSet<DockerService> linkServices = new HashSet<>(links);
+
+        DockerHealthchek healthchek = null;
+
+        if (StringUtils.isNotEmpty(txtHealthcheckCommamd.getText())) {
+            int interval = 0, timeout = 0, retries = 0;
+
+            if (StringUtils.isNotEmpty(txtHealthcheckInterval.getText())) {
+                interval = Integer.parseInt(txtHealthcheckInterval.getText());
+            }
+
+            if (StringUtils.isNotEmpty(txtHealthcheckTimeout.getText())) {
+                interval = Integer.parseInt(txtHealthcheckTimeout.getText());
+            }
+
+            if (StringUtils.isNotEmpty(txtHealthcheckRetries.getText())) {
+                interval = Integer.parseInt(txtHealthcheckRetries.getText());
+            }
+
+            healthchek = new DockerHealthchek(txtHealthcheckCommamd.getText(), interval, timeout, retries);
+        }
+
+        Context.createdService = new DockerService(txtName.getText(), txtImage.getText(), "", "", restartOption, portMappings,
+                        volumeMappings, environmentVars, dependServices, linkServices, healthchek);
+
+        openDetailsWindow(Context.createdService);
+    }
+
+
+    private void openDetailsWindow(DockerService createdService) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("service/details.fxml"));
+            Stage serviceDetailsStage = new Stage();
+            serviceDetailsStage.initModality(Modality.WINDOW_MODAL);
+            serviceDetailsStage.setTitle(createdService.getName());
+            serviceDetailsStage.setScene(new Scene(fxmlLoader.load()));
+            ServiceDetailsController serviceDetailsController = fxmlLoader.<ServiceDetailsController>getController();
+            serviceDetailsController.init(createdService);
+            serviceDetailsStage.show();
+
+            ((Stage) txtName.getScene().getWindow()).close();
+        } catch (IOException ex) {
+            log.error("Could not open window for details of service: {}", ex.getMessage());
+            showNotificationDialog("Error", "Could not open window for details of service", Alert.AlertType.ERROR);
         }
     }
 
