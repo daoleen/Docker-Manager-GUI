@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="596.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.sunny.generator.docker.controller.ServiceUpdateController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.0" minWidth="10.0" prefWidth="99.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.0" minWidth="10.0" prefWidth="482.0" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="41.0" minHeight="10.0" prefHeight="11.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="115.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="193.0" minHeight="30.0" prefHeight="100.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="222.0" minHeight="30.0" prefHeight="100.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="78.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="113.0" minHeight="30.0" prefHeight="109.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="118.0" minHeight="30.0" prefHeight="113.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="192.0" minHeight="10.0" prefHeight="152.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="90.0" minHeight="0.0" prefHeight="37.0" vgrow="SOMETIMES" />
+    </rowConstraints>
+    <children>
+        <Label text="Name" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <TextField fx:id="txtName" promptText="Service name" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+        <Label text="Image" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <TextField fx:id="txtImage" promptText="Service image" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+        <Label text="Restart" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <ComboBox fx:id="selRestart" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+        <Label prefWidth="36.0" text="Ports" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <children>
+                <VBox prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <Button fx:id="btnAddPort" mnemonicParsing="false" onAction="#addPort" style="-fx-background-color: #72b872;" text="+" textFill="#1a136b">
+                            <font>
+                                <Font size="10.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets top="15.0" />
+                            </VBox.margin>
+                        </Button>
+                        <Button fx:id="btnRemovePort" mnemonicParsing="false" onAction="#removePort" style="-fx-background-color: #ff6f60;" text="-" textFill="#334472">
+                            <VBox.margin>
+                                <Insets top="10.0" />
+                            </VBox.margin>
+                        </Button>
+                    </children>
+                </VBox>
+
+                <TableView fx:id="tblPorts" editable="true" prefHeight="120.0" prefWidth="450.0">
+                    <columns>
+                        <TableColumn fx:id="tblPortsColHost" editable="true" prefWidth="199.0" text="Host" />
+                        <TableColumn fx:id="tblPortsColContainer" editable="true" prefWidth="187.0" text="Container" />
+                    </columns>
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </TableView>
+
+            </children>
+            <padding>
+                <Insets top="10.0" />
+            </padding>
+        </HBox>
+
+        <Label text="Volumes" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <children>
+                <VBox prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <Button fx:id="btnAddVolume" mnemonicParsing="false" onAction="#addVolume" style="-fx-background-color: #72b872;" text="+" textFill="#1a136b">
+                            <font>
+                                <Font size="10.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets top="15.0" />
+                            </VBox.margin>
+                        </Button>
+                        <Button fx:id="btnRemoveVolume" mnemonicParsing="false" onAction="#removeVolume" style="-fx-background-color: #ff6f60;" text="-" textFill="#334472">
+                            <VBox.margin>
+                                <Insets top="10.0" />
+                            </VBox.margin>
+                        </Button>
+                    </children>
+                </VBox>
+
+                <TableView fx:id="tblVolumes" editable="true" prefHeight="120.0" prefWidth="450.0">
+                    <columns>
+                        <TableColumn fx:id="tblVolumesColHost" editable="true" prefWidth="199.0" text="Host" />
+                        <TableColumn fx:id="tblVolumesColContainer" editable="true" prefWidth="187.0" text="Container" />
+                    </columns>
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </TableView>
+
+            </children>
+            <GridPane.margin>
+                <Insets top="10.0" />
+            </GridPane.margin>
+        </HBox>
+
+        <Label text="Links" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <children>
+                <VBox prefHeight="56.0" prefWidth="149.0">
+                    <children>
+                        <ComboBox fx:id="selLinks" prefHeight="26.0" prefWidth="154.0" promptText="Select link" />
+                        <HBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                            <children>
+                                <Button fx:id="btnAddLink" mnemonicParsing="false" onAction="#addLink" prefWidth="23.0" style="-fx-background-color: #72b872;" text="+" textFill="#1a136b">
+                                    <font>
+                                        <Font size="10.0" />
+                                    </font>
+                                </Button>
+                                <Button fx:id="btnRemoveLink" alignment="CENTER" contentDisplay="TOP" graphicTextGap="0.0" mnemonicParsing="false" onAction="#removeLink" prefWidth="23.0" style="-fx-background-color: #ff6f60;" text="-" textAlignment="CENTER" textFill="#334472">
+                                    <font>
+                                        <Font size="10.0" />
+                                    </font>
+                           <HBox.margin>
+                              <Insets left="30.0" />
+                           </HBox.margin>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <ListView fx:id="listLinks" prefHeight="56.0" prefWidth="274.0">
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </ListView>
+
+            </children>
+            <GridPane.margin>
+                <Insets top="10.0" />
+            </GridPane.margin>
+        </HBox>
+
+        <Label text="Environments" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+            <children>
+                <VBox prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <Button fx:id="btnAddEnvironment" mnemonicParsing="false" onAction="#addEnvironment" style="-fx-background-color: #72b872;" text="+" textFill="#1a136b">
+                            <font>
+                                <Font size="10.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets top="15.0" />
+                            </VBox.margin>
+                        </Button>
+                        <Button fx:id="btnRemoveEnvironment" mnemonicParsing="false" onAction="#removeEnvironment" style="-fx-background-color: #ff6f60;" text="-" textFill="#334472">
+                            <VBox.margin>
+                                <Insets top="10.0" />
+                            </VBox.margin>
+                        </Button>
+                    </children>
+                </VBox>
+
+                <TableView fx:id="tblEnvironments" editable="true" prefHeight="120.0" prefWidth="450.0">
+                    <columns>
+                        <TableColumn fx:id="tblEnvironmentsColKey" editable="true" prefWidth="199.0" text="Key" />
+                        <TableColumn fx:id="tblEnvironmentsColValue" editable="true" prefWidth="187.0" text="Value" />
+                    </columns>
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </TableView>
+
+            </children>
+            <padding>
+                <Insets top="10.0" />
+            </padding>
+        </HBox>
+
+        <Label text="Depends On" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+            <children>
+                <VBox prefHeight="108.0" prefWidth="195.0">
+                    <children>
+                        <ComboBox fx:id="selDepends" prefHeight="26.0" prefWidth="190.0" promptText="Select service" />
+                        <ComboBox fx:id="selDependsCondition" prefHeight="26.0" prefWidth="189.0" promptText="Condition" />
+                        <HBox alignment="TOP_CENTER" prefHeight="56.0" prefWidth="144.0">
+                            <children>
+                                <Button fx:id="btnAddDepends" mnemonicParsing="false" onAction="#addDepends" prefWidth="23.0" style="-fx-background-color: #72b872;" text="+" textFill="#1a136b">
+                                    <font>
+                                        <Font size="10.0" />
+                                    </font>
+                                </Button>
+                                <Button fx:id="btnRemoveDepends" alignment="CENTER" contentDisplay="TOP" graphicTextGap="0.0" mnemonicParsing="false" onAction="#removeDepends" prefWidth="23.0" style="-fx-background-color: #ff6f60;" text="-" textAlignment="CENTER" textFill="#334472">
+                                    <font>
+                                        <Font size="10.0" />
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets left="30.0" />
+                                    </HBox.margin>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <ListView fx:id="listDepends" prefHeight="108.0" prefWidth="288.0">
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </ListView>
+
+            </children>
+            <GridPane.margin>
+                <Insets top="10.0" />
+            </GridPane.margin>
+        </HBox>
+
+        <Label text="Healthcheck" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+        <GridPane prefHeight="51.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="211.0" minWidth="10.0" prefWidth="127.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="379.0" minWidth="10.0" prefWidth="355.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Label text="Test Command" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <TextField fx:id="txtHealthcheckCommamd" prefHeight="26.0" prefWidth="365.0" promptText="[&quot;CMD&quot;, &quot;curl&quot;, &quot;http://servicename:8090/actuator/health&quot;]" GridPane.columnIndex="1" GridPane.rowIndex="0">
+               <font>
+                  <Font size="11.0" />
+               </font></TextField>
+
+                <Label text="Interval" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <TextField fx:id="txtHealthcheckInterval" promptText="5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                <Label text="Timeout" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <TextField fx:id="txtHealthcheckTimeout" promptText="5" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                <Label text="Retries" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <TextField fx:id="txtHealthcheckRetries" promptText="10" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            </children>
+         <padding>
+            <Insets top="30.0" />
+         </padding>
+        </GridPane>
+
+        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="9">
+            <Button fx:id="btnUpdate" mnemonicParsing="false" onAction="#save" style="-fx-background-color: #1b7524;" text="Update" textAlignment="CENTER" textFill="WHITE">
+                <HBox.margin>
+                    <Insets right="50.0" />
+                </HBox.margin>
+            </Button>
+            <Button fx:id="btnCancel" mnemonicParsing="false" style="-fx-background-color: #b24e4e;" text="Cancel" textAlignment="CENTER" textFill="#ebe7db" />
+        </HBox>
+
+    </children>
+   <padding>
+      <Insets left="5.0" right="10.0" top="5.0" />
+   </padding>
+</GridPane>
