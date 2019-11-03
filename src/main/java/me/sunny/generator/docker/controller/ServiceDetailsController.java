@@ -113,8 +113,20 @@ public class ServiceDetailsController {
 
 
     public void editService(ActionEvent actionEvent) {
-        // TODO
-        throw new UnsupportedOperationException("Not implemented yet");
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("service/update.fxml"));
+            Stage serviceUpdateStage = new Stage();
+            serviceUpdateStage.initModality(Modality.WINDOW_MODAL);
+            serviceUpdateStage.setTitle("Update " + dockerServiceDescription.getService().getName());
+            serviceUpdateStage.setScene(new Scene(fxmlLoader.load()));
+            ServiceUpdateController serviceUpdateController = fxmlLoader.getController();
+            serviceUpdateController.init(dockerServiceDescription.getService().getName());
+            serviceUpdateStage.show();
+            close();
+        } catch (IOException ex) {
+            log.error("Could not open window for update service: {}", ex.getMessage());
+            Context.showNotificationDialog("Error", "Could not open window for update service", Alert.AlertType.ERROR);
+        }
     }
 
 

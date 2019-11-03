@@ -2,7 +2,6 @@ package me.sunny.generator.docker.controller;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,19 +26,22 @@ import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.domain.*;
 import me.sunny.generator.docker.enums.DockerDependCondition;
 import me.sunny.generator.docker.enums.DockerRestartOption;
+import me.sunny.generator.docker.exception.ResourceNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 
 
 @Slf4j
-public class ServiceCreateController {
-    private final ObservableList<DockerPortMapping> ports = FXCollections.observableArrayList();
-    private final ObservableList<DockerVolumeMapping> volumes = FXCollections.observableArrayList();
+public class ServiceUpdateController {
     private final ObservableList<DockerService> services = FXCollections.observableArrayList();
-    private final ObservableList<DockerService> links = FXCollections.observableArrayList();
-    private final ObservableList<Map.Entry<String, String>> environments = FXCollections.observableArrayList();
-    private final ObservableList<DockerDepend> depends = FXCollections.observableArrayList();
     private final ObservableList<DockerDependCondition> dependConditions = FXCollections.observableArrayList(DockerDependCondition.values());
     private final ObservableList<DockerRestartOption> restartOptions = FXCollections.observableArrayList(DockerRestartOption.values());
+
+
+    private ObservableList<DockerPortMapping> ports;
+    private ObservableList<DockerVolumeMapping> volumes;
+    private ObservableList<DockerService> links;
+    private ObservableList<Map.Entry<String, String>> environments;
+    private ObservableList<DockerDepend> depends;
 
 
     @FXML
@@ -100,8 +102,19 @@ public class ServiceCreateController {
     private TextField txtHealthcheckRetries;
 
 
+    private DockerService service;
+
+
     @FXML
-    private void initialize() {
+    public void init(String serviceName) {
+        try {
+            this.service = Context.project.findService(serviceName).getService();
+        } catch (ResourceNotFoundException e) {
+            Context.showNotificationDialog("Error", "Could not open window for update service", Alert.AlertType.ERROR);
+        }
+
+        initDefaultValues();
+
         initRestartOptionsCombo();
         initPortsTable();
         initVolumesTable();
@@ -114,9 +127,29 @@ public class ServiceCreateController {
     }
 
 
+    private void initDefaultValues() {
+        txtName.setText(service.getName());
+        txtImage.setText(service.getImage());
+        selRestart.getSelectionModel().select(service.getRestart());
+
+        ports = FXCollections.observableArrayList(service.getPorts());
+        volumes = FXCollections.observableArrayList(service.getVolumes());
+        links = FXCollections.observableArrayList(service.getLinks());
+        environments = FXCollections.observableArrayList(service.getEnvironment().entrySet());
+        depends = FXCollections.observableArrayList(service.getDepends());
+
+        if (service.getHealthcheck() != null && StringUtils.isNotEmpty(service.getHealthcheck().getTest())) {
+            txtHealthcheckCommamd.setText(service.getHealthcheck().getTest());
+            txtHealthcheckInterval.setText(Integer.toString(service.getHealthcheck().getIntervalSeconds()));
+            txtHealthcheckTimeout.setText(Integer.toString(service.getHealthcheck().getTimeoutSeconds()));
+            txtHealthcheckRetries.setText(Integer.toString(service.getHealthcheck().getRetriesCount()));
+        }
+
+    }
+
+
     private void initRestartOptionsCombo() {
         selRestart.setItems(restartOptions);
-        selRestart.getSelectionModel().select(DockerRestartOption.NO);
     }
 
 
@@ -369,11 +402,19 @@ public class ServiceCreateController {
             healthchek = new DockerHealthchek(txtHealthcheckCommamd.getText(), interval, timeout, retries);
         }
 
-        DockerService createdService = new DockerService(txtName.getText(), txtImage.getText(), "", restartOption, portMappings,
-                        volumeMappings, environmentVars, dependServices, linkServices, healthchek);
 
-        Context.project.getAvailableServices().add(new DockerServiceDescription(createdService));
-        openDetailsWindow(createdService.getName());
+        service.setName(txtName.getText());
+        service.setImage(txtImage.getText());
+        service.setBuildPath("");
+        service.setRestart(restartOption);
+        service.setPorts(portMappings);
+        service.setVolumes(volumeMappings);
+        service.setEnvironment(environmentVars);
+        service.setDepends(dependServices);
+        service.setLinks(linkServices);
+        service.setHealthcheck(healthchek);
+
+        openDetailsWindow(service.getName());
     }
 
 
@@ -394,10 +435,10 @@ public class ServiceCreateController {
             Context.showNotificationDialog("Error", "Could not open window for details of service", Alert.AlertType.ERROR);
         }
     }
-
-
     @AllArgsConstructor
     private final static class EnvironmentEntry implements Map.Entry<String, String> {
+
+
         private String key;
         private String value;
 
