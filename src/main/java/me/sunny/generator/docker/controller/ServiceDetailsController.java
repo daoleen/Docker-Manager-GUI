@@ -1,12 +1,16 @@
 package me.sunny.generator.docker.controller;
 
 
+import java.io.IOException;
 import java.util.stream.Collectors;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
@@ -115,7 +119,24 @@ public class ServiceDetailsController {
 
 
     public void createVersion(ActionEvent actionEvent) {
-        // TODO
-        throw new UnsupportedOperationException("Not implemented yet");
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("version/create.fxml"));
+            Stage versionCreateStage = new Stage();
+            versionCreateStage.initModality(Modality.WINDOW_MODAL);
+            versionCreateStage.setTitle("Create new version for " + dockerServiceDescription.getService().getName());
+            versionCreateStage.setScene(new Scene(fxmlLoader.load()));
+            VersionCreateController versionCreateController = fxmlLoader.<VersionCreateController>getController();
+            versionCreateController.init(dockerServiceDescription.getService().getName(), this);
+            versionCreateStage.show();
+        } catch (IOException ex) {
+            log.error("Could not open window for details of service: {}", ex.getMessage());
+            Context.showNotificationDialog("Error", "Could not open window for details of service", Alert.AlertType.ERROR);
+        }
+    }
+
+
+    public void refreshVersions() {
+        String versions = String.join("\n", dockerServiceDescription.getVersions());
+        lblVersions.setText(versions);
     }
 }
