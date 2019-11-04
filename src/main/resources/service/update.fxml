@@ -270,7 +270,7 @@
                     <Insets right="50.0" />
                 </HBox.margin>
             </Button>
-            <Button fx:id="btnCancel" mnemonicParsing="false" style="-fx-background-color: #b24e4e;" text="Cancel" textAlignment="CENTER" textFill="#ebe7db" />
+            <Button fx:id="btnCancel" mnemonicParsing="false" style="-fx-background-color: #b24e4e;" text="Cancel" textAlignment="CENTER" textFill="#ebe7db" onAction="#cancel" />
         </HBox>
 
     </children>

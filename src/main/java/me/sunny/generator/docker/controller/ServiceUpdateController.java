@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -32,7 +33,8 @@ import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 public class ServiceUpdateController {
-    private final ObservableList<DockerService> services = FXCollections.observableArrayList();
+    private final ObservableList<DockerService> services = FXCollections.observableArrayList(
+            Context.project.getAvailableServices().stream().map(DockerServiceDescription::getService).collect(Collectors.toList()));
     private final ObservableList<DockerDependCondition> dependConditions = FXCollections.observableArrayList(DockerDependCondition.values());
     private final ObservableList<DockerRestartOption> restartOptions = FXCollections.observableArrayList(DockerRestartOption.values());
 
@@ -219,12 +221,6 @@ public class ServiceUpdateController {
 
 
     private void initServicesCombo() {
-        services.addAll(
-                new DockerService("Test service 1", "Test image", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek()),
-                new DockerService("Test service 2", "Test image", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek()),
-                new DockerService("Test service 3", "Test image", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek())
-        );
-
         selLinks.setItems(services);
         selDepends.setItems(services);
     }
@@ -435,6 +431,13 @@ public class ServiceUpdateController {
             Context.showNotificationDialog("Error", "Could not open window for details of service", Alert.AlertType.ERROR);
         }
     }
+
+
+    public void cancel(ActionEvent actionEvent) {
+        openDetailsWindow(service.getName());
+    }
+
+
     @AllArgsConstructor
     private final static class EnvironmentEntry implements Map.Entry<String, String> {
 
