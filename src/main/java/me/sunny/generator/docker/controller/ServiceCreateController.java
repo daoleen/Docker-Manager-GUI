@@ -2,10 +2,10 @@ package me.sunny.generator.docker.controller;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -34,7 +34,8 @@ import org.apache.commons.lang3.StringUtils;
 public class ServiceCreateController {
     private final ObservableList<DockerPortMapping> ports = FXCollections.observableArrayList();
     private final ObservableList<DockerVolumeMapping> volumes = FXCollections.observableArrayList();
-    private final ObservableList<DockerService> services = FXCollections.observableArrayList();
+    private final ObservableList<DockerService> services = FXCollections.observableArrayList(
+            Context.project.getAvailableServices().stream().map(DockerServiceDescription::getService).collect(Collectors.toList()));
     private final ObservableList<DockerService> links = FXCollections.observableArrayList();
     private final ObservableList<Map.Entry<String, String>> environments = FXCollections.observableArrayList();
     private final ObservableList<DockerDepend> depends = FXCollections.observableArrayList();
@@ -186,12 +187,6 @@ public class ServiceCreateController {
 
 
     private void initServicesCombo() {
-        services.addAll(
-                new DockerService("Test service 1", "Test image", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek()),
-                new DockerService("Test service 2", "Test image", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek()),
-                new DockerService("Test service 3", "Test image", "bp", DockerRestartOption.NO, new HashSet<DockerPortMapping>(), new HashSet<DockerVolumeMapping>(), new HashMap<String, String>(), new HashSet<DockerDepend>(), new HashSet<DockerService>(), new DockerHealthchek())
-        );
-
         selLinks.setItems(services);
         selDepends.setItems(services);
     }
