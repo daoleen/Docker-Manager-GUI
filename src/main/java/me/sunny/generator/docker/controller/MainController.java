@@ -39,4 +39,19 @@ public class MainController {
 
     public void about(ActionEvent actionEvent) {
     }
+
+
+    public void openServiceComposition(ActionEvent actionEvent) {
+        try {
+            Parent serviceCompositionWnd = FXMLLoader.load(getClass().getClassLoader().getResource("composition.fxml"));
+            Stage serviceCompositionStage = new Stage();
+            serviceCompositionStage.initModality(Modality.WINDOW_MODAL);
+            serviceCompositionStage.setTitle("Services Composition");
+            serviceCompositionStage.setScene(new Scene(serviceCompositionWnd));
+            serviceCompositionStage.show();
+        } catch (IOException ex) {
+            log.error("Could not open window for service composition: {}", ex.getMessage());
+            Context.showNotificationDialog("Error", "Could not open window for service composition", Alert.AlertType.ERROR);
+        }
+    }
 }
