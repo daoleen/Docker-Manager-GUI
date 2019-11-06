@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="428.0"
+          prefWidth="953.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="me.sunny.generator.docker.controller.CompositionController">
+    <columnConstraints>
+        <ColumnConstraints/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.0" minWidth="10.0" prefWidth="325.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="228.0" minWidth="10.0" prefWidth="101.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="544.0" minWidth="10.0" prefWidth="486.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="128.0" minHeight="0.0" prefHeight="11.0" valignment="CENTER" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="319.0" minHeight="10.0" prefHeight="308.0" vgrow="SOMETIMES"/>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <children>
+        <ComboBox prefHeight="26.0" prefWidth="239.0" promptText="Select saved composition" GridPane.columnIndex="1"
+                  GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1"
+              GridPane.rowIndex="1">
+            <children>
+                <Label text="Available Services"/>
+                <ListView fx:id="listAvailableServices" prefHeight="305.0" prefWidth="200.0"/>
+            </children>
+        </VBox>
+        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="3"
+              GridPane.rowIndex="1">
+            <children>
+                <Label text="Selected services"/>
+                <TableView fx:id="tblSelectedServices" prefHeight="305.0" prefWidth="200.0">
+                    <columns>
+                        <TableColumn fx:id="tblSelectedServicesColService" prefWidth="291.0" text="Service"/>
+                        <TableColumn fx:id="tblSelectedServicesColVersion" minWidth="0.0" prefWidth="211.0"
+                                     text="Version"/>
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <children>
+                <Button alignment="TOP_LEFT" mnemonicParsing="false" text="&gt;" onAction="#addConcretedService">
+                    <font>
+                        <Font name="Monaco Plain:001.001" size="21.0"/>
+                    </font>
+                    <HBox.margin>
+                        <Insets right="20.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button alignment="CENTER" mnemonicParsing="false" text="&lt;" onAction="#removeConcretedService">
+                    <font>
+                        <Font name="Monaco Plain:001.001" size="21.0"/>
+                    </font>
+                </Button>
+            </children>
+        </HBox>
+    </children>
+</GridPane>

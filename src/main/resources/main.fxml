@@ -17,6 +17,7 @@
                <Menu mnemonicParsing="false" text="File">
                    <items>
                        <MenuItem fx:id="mnuServiceCreate" mnemonicParsing="false" onAction="#openServiceCreateWindow" text="Create a new service" />
+                       <MenuItem fx:id="mnuServiceComposition" mnemonicParsing="false" onAction="#openServiceComposition" text="Composition" />
                        <MenuItem fx:id="mnuQuit" mnemonicParsing="false" onAction="#quit" text="Quit" />
                    </items>
                </Menu>
