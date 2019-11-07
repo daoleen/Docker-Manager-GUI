@@ -33,7 +33,8 @@ public class Context {
 
         Composition composition1 = new Composition("composition 1", new HashSet<>(Arrays.asList(new DockerServiceConcreted(service2.getService(), service2.getVersions().get(0)), new DockerServiceConcreted(service4.getService(), service4.getVersions().get(0)))));
         Composition composition2 = new Composition("composition 2", new HashSet<>(Arrays.asList(new DockerServiceConcreted(service1.getService(), service1.getVersions().get(0)), new DockerServiceConcreted(service3.getService(), service3.getVersions().get(0)), new DockerServiceConcreted(service5.getService(), service5.getVersions().get(0)))));
-        project.setCompositions(new HashSet<>(Arrays.asList(composition1, composition2)));
+        Composition composition3 = new Composition("composition 3", new HashSet<>(Arrays.asList(new DockerServiceConcreted(service2.getService(), service2.getVersions().get(0)), new DockerServiceConcreted(service5.getService(), service5.getVersions().get(service5.getVersions().size() - 1)))));
+        project.setCompositions(new HashSet<>(Arrays.asList(composition1, composition2, composition3)));
     }
 
 

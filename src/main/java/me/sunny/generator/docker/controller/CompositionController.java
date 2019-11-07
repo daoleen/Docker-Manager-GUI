@@ -4,6 +4,7 @@ package me.sunny.generator.docker.controller;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -25,6 +26,7 @@ import me.sunny.generator.docker.exception.ResourceNotFoundException;
 
 @Slf4j
 public class CompositionController {
+    private final ObservableList<DockerServiceConcreted> selectedConcretedServices = FXCollections.observableArrayList();
     private final Composition emptyComposition = new Composition("--- New Composition ---", null);
     private ObservableList<Composition> compositions;
 
@@ -48,13 +50,16 @@ public class CompositionController {
     @FXML
     public void initialize() {
         initSelCompositions();
+        initTblSelectedServices();
         initAvailableServices();
+    }
 
+
+    private void initTblSelectedServices() {
         tblSelectedServices.setEditable(true);
-
         tblSelectedServicesColService.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getService().getName()));
-
         tblSelectedServicesColVersion.setCellValueFactory(new PropertyValueFactory<>("version"));
+
         Callback<TableColumn<DockerServiceConcreted, String>, TableCell<DockerServiceConcreted, String>> cellVersionCallback = new Callback<TableColumn<DockerServiceConcreted, String>, TableCell<DockerServiceConcreted, String>>() {
             @Override
             public TableCell<DockerServiceConcreted, String> call(TableColumn<DockerServiceConcreted, String> param) {
@@ -104,6 +109,9 @@ public class CompositionController {
             String version = event.getNewValue();
             event.getRowValue().setVersion(version);
         });
+
+        tblSelectedServices.setItems(selectedConcretedServices);
+        initTblSelectedServicesData();
     }
 
 
@@ -145,7 +153,7 @@ public class CompositionController {
 
             if (selectedService.getDepends() != null && (!selectedService.getDepends().isEmpty())) {
                 selectedService.getDepends().forEach(depend -> {
-                    if (tblSelectedServices.getItems().stream().noneMatch(cs -> ((DockerServiceConcreted) cs).getService().equals(depend.getService()))) {
+                    if (selectedConcretedServices.stream().noneMatch(cs -> ((DockerServiceConcreted) cs).getService().equals(depend.getService()))) {
                         addDockerServiceToConcreted(depend.getService());
                     }
                 });
@@ -170,8 +178,8 @@ public class CompositionController {
 
         DockerServiceConcreted concretedService = new DockerServiceConcreted(selectedService, (versions.isEmpty() ? null : versions.get(versions.size() - 1)));
 
-        if (!tblSelectedServices.getItems().contains(concretedService)) {
-            tblSelectedServices.getItems().add(concretedService);
+        if (!selectedConcretedServices.contains(concretedService)) {
+            selectedConcretedServices.add(concretedService);
         }
     }
 
@@ -228,5 +236,46 @@ public class CompositionController {
             initSelCompositions();
             selComposition.getSelectionModel().select(composition);
         }
+    }
+
+
+    private void initTblSelectedServicesData() {
+        Object selectedComposition = selComposition.getSelectionModel().getSelectedItem();
+        selectedConcretedServices.clear();
+
+        if (selectedComposition != null && !emptyComposition.equals(selectedComposition)) {
+            // load composition services
+            Composition composition = (Composition) selectedComposition;
+
+            // add all concreted services (services with specified version)
+            selectedConcretedServices.addAll(composition.getServices());
+
+            composition.getServices().stream()
+                    .flatMap(serviceConcreted -> {
+                        if (serviceConcreted.getService().getDepends() != null && !serviceConcreted.getService().getDepends().isEmpty()) {
+                            return serviceConcreted.getService().getDepends().stream();
+                        }
+                        return Stream.empty();
+                    })
+                    .map(DockerDepend::getService)
+                    .distinct()
+                    .forEach(srv -> {
+                        if (selectedConcretedServices.stream().map(DockerServiceConcreted::getService).noneMatch(selectedService -> selectedService.getName().equals(srv.getName()))) {
+                            addDockerServiceToConcreted(srv);
+                        }
+                    });
+        }
+
+        initAvailableServices();
+    }
+
+
+    public void compositionSelected(ActionEvent actionEvent) {
+        initTblSelectedServicesData();
+    }
+
+
+    public void close(ActionEvent actionEvent) {
+        ((Stage) tblSelectedServices.getScene().getWindow()).close();
     }
 }

@@ -27,7 +27,7 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
-        <ComboBox fx:id="selComposition" prefHeight="26.0" prefWidth="239.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+        <ComboBox fx:id="selComposition" onAction="#compositionSelected" prefHeight="26.0" prefWidth="239.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
         <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
             <children>
                 <Label text="Available Services" />
@@ -64,7 +64,11 @@
         </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
          <children>
-            <Button defaultButton="true" mnemonicParsing="false" onAction="#applyComposition" style="-fx-background-color: #81a345;" text="Apply To Composition" />
+            <Button mnemonicParsing="false" onAction="#applyComposition" style="-fx-background-color: #81a345;" text="Apply To Project Composition" />
+            <Button cancelButton="true" mnemonicParsing="false" onAction="#close" style="-fx-background-color: #b24e4e;" text="Close" textFill="#ebe7db">
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin></Button>
          </children>
       </HBox>
     </children>
