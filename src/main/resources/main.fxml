@@ -42,7 +42,10 @@
             <VBox prefHeight="440.0" prefWidth="313.0">
                <children>
                   <Label text="Available Compositions" />
-                  <ListView fx:id="listCompositions" prefHeight="184.0" prefWidth="290.0" />
+                  <ListView fx:id="listCompositions" onMouseClicked="#onMouseClickedOnComposition" prefHeight="184.0" prefWidth="290.0">
+                     <tooltip>
+                        <Tooltip text="Double Click on item to show composition details" />
+                     </tooltip></ListView>
                   <Label text="Available Hosts">
                      <VBox.margin>
                         <Insets top="15.0" />

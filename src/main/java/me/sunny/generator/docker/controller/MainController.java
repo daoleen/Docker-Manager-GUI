@@ -93,17 +93,7 @@ public class MainController {
 
 
     public void openServiceComposition(ActionEvent actionEvent) {
-        try {
-            Parent serviceCompositionWnd = FXMLLoader.load(getClass().getClassLoader().getResource("composition.fxml"));
-            Stage serviceCompositionStage = new Stage();
-            serviceCompositionStage.initModality(Modality.WINDOW_MODAL);
-            serviceCompositionStage.setTitle("Services Composition");
-            serviceCompositionStage.setScene(new Scene(serviceCompositionWnd));
-            serviceCompositionStage.show();
-        } catch (IOException ex) {
-            log.error("Could not open window for service composition: {}", ex.getMessage());
-            Context.showNotificationDialog("Error", "Could not open window for service composition", Alert.AlertType.ERROR);
-        }
+        openServiceCompositionWindow(null);
     }
 
 
@@ -114,6 +104,34 @@ public class MainController {
         }
     }
 
+
+    // show composition window on double-click
+    public void onMouseClickedOnComposition(MouseEvent mouseEvent) {
+        if (MouseButton.PRIMARY.equals(mouseEvent.getButton()) && 2 == mouseEvent.getClickCount()) {
+            openServiceCompositionWindow(listCompositions.getSelectionModel().getSelectedItem());
+        }
+    }
+
+
+    private void openServiceCompositionWindow(Composition composition) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("composition.fxml"));
+            Stage serviceCompositionStage = new Stage();
+            serviceCompositionStage.initModality(Modality.WINDOW_MODAL);
+            serviceCompositionStage.setTitle("Services Composition");
+            serviceCompositionStage.setScene(new Scene(fxmlLoader.load()));
+
+            if (composition != null) {
+                CompositionController controller = fxmlLoader.<CompositionController>getController();
+                controller.selectComposition(composition);
+            }
+
+            serviceCompositionStage.show();
+        } catch (IOException ex) {
+            log.error("Could not open window for service composition: {}", ex.getMessage());
+            Context.showNotificationDialog("Error", "Could not open window for service composition", Alert.AlertType.ERROR);
+        }
+    }
 
 
     private void openDetailsWindow(String serviceName) {
