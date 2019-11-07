@@ -151,4 +151,10 @@ public class ServiceDetailsController {
         String versions = String.join("\n", dockerServiceDescription.getVersions());
         lblVersions.setText(versions);
     }
+
+
+    public void deleteService(ActionEvent actionEvent) {
+        Context.project.getAvailableServices().remove(dockerServiceDescription);
+        close();
+    }
 }
