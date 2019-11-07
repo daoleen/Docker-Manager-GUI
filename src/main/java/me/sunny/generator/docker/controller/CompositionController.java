@@ -1,8 +1,8 @@
 package me.sunny.generator.docker.controller;
 
 
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -10,19 +10,27 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
-import me.sunny.generator.docker.domain.DockerService;
-import me.sunny.generator.docker.domain.DockerServiceConcreted;
-import me.sunny.generator.docker.domain.DockerServiceDescription;
+import me.sunny.generator.docker.domain.*;
 import me.sunny.generator.docker.exception.ResourceNotFoundException;
 
 
 @Slf4j
 public class CompositionController {
+    private final Composition emptyComposition = new Composition("--- New Composition ---", null);
+    private ObservableList<Composition> compositions;
+
+
+    @FXML
+    private ComboBox selComposition;
 
     @FXML
     private ListView listAvailableServices;
@@ -39,6 +47,7 @@ public class CompositionController {
 
     @FXML
     public void initialize() {
+        initSelCompositions();
         initAvailableServices();
 
         tblSelectedServices.setEditable(true);
@@ -95,6 +104,17 @@ public class CompositionController {
             String version = event.getNewValue();
             event.getRowValue().setVersion(version);
         });
+    }
+
+
+    private void initSelCompositions() {
+        ArrayList<Composition> compositions = new ArrayList<>(Context.project.getCompositions().size() + 1);
+        compositions.add(emptyComposition);
+        compositions.addAll(Context.project.getCompositions());
+        this.compositions = FXCollections.observableArrayList(compositions);
+
+        selComposition.setItems(this.compositions);
+        selComposition.getSelectionModel().select(emptyComposition);
     }
 
 
@@ -167,5 +187,46 @@ public class CompositionController {
 
         // reinit available services list
         initAvailableServices();
+    }
+
+
+    public void applyComposition(ActionEvent actionEvent) {
+        Object selectedItem = selComposition.getSelectionModel().getSelectedItem();
+
+        if (selectedItem != null) {
+            Composition composition = (Composition) selectedItem;
+
+            if (emptyComposition.equals(composition)) {
+                log.warn("Empty composition");
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("dialog.fxml"));
+                Stage dialogStage = new Stage();
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
+                dialogStage.setTitle("Enter new composition name");
+                try {
+                    dialogStage.setScene(new Scene(fxmlLoader.load()));
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                    Context.showNotificationDialog("Error applying composition", e.getMessage(), Alert.AlertType.ERROR);
+                }
+                DialogController dialogController = fxmlLoader.<DialogController>getController();
+                dialogController.init("Please enter new composition name here", "");
+                dialogStage.showAndWait();
+
+                log.debug("After wait: {}", dialogController.getContent());
+
+                if (dialogController.isCancelled()) {
+                    log.info("Skip applying new composition because it was cancelled by user");
+                    return;
+                }
+
+                composition = new Composition(dialogController.getContent(), null);
+                Context.project.getCompositions().add(composition);
+            }
+
+            ObservableList<DockerServiceConcreted> selectedConcretedServices = tblSelectedServices.getItems();
+            composition.setServices(new HashSet<>(selectedConcretedServices));
+            initSelCompositions();
+            selComposition.getSelectionModel().select(composition);
+        }
     }
 }

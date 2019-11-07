@@ -2,14 +2,10 @@ package me.sunny.generator.docker;
 
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 
 import javafx.scene.control.Alert;
-import me.sunny.generator.docker.domain.DockerDepend;
-import me.sunny.generator.docker.domain.DockerService;
-import me.sunny.generator.docker.domain.DockerServiceDescription;
-import me.sunny.generator.docker.domain.Project;
+import me.sunny.generator.docker.domain.*;
 import me.sunny.generator.docker.enums.DockerDependCondition;
 
 
@@ -33,6 +29,11 @@ public class Context {
         service5.getService().setDepends(docker5depends);
 
         project.setAvailableServices(new HashSet<>(Arrays.asList(service1, service2, service3, service4, service5)));
+
+
+        Composition composition1 = new Composition("composition 1", new HashSet<>(Arrays.asList(new DockerServiceConcreted(service2.getService(), service2.getVersions().get(0)), new DockerServiceConcreted(service4.getService(), service4.getVersions().get(0)))));
+        Composition composition2 = new Composition("composition 2", new HashSet<>(Arrays.asList(new DockerServiceConcreted(service1.getService(), service1.getVersions().get(0)), new DockerServiceConcreted(service3.getService(), service3.getVersions().get(0)), new DockerServiceConcreted(service5.getService(), service5.getVersions().get(0)))));
+        project.setCompositions(new HashSet<>(Arrays.asList(composition1, composition2)));
     }
 
 
