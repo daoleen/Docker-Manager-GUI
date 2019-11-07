@@ -12,11 +12,12 @@ import me.sunny.generator.docker.enums.DockerDependCondition;
 public class Context {
     public static Project project;
 
-    static {
+
+    // TODO: mocked
+    public static void initMockedProject() {
         project = new Project();
+        project.setName("GENERATOR-DOCKER-PROJECT");
 
-
-        // TODO: mocked
         DockerServiceDescription service1 = new DockerServiceDescription(new DockerService("service1", "img", null, null, null, null, null, null, null, null), Arrays.asList("s1-v1", "s1-v2", "s1-v3"));
         DockerServiceDescription service2 = new DockerServiceDescription(new DockerService("service2", "img", null, null, null, null, null, null, null, null), Arrays.asList("s2-v1", "s2-v2", "s2-v3"));
         DockerServiceDescription service3 = new DockerServiceDescription(new DockerService("service3", "img", null, null, null, null, null, null, null, null), Arrays.asList("s3-v1", "s3-v2", "s3-v3"));

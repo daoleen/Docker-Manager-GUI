@@ -14,6 +14,7 @@ import me.sunny.generator.docker.exception.ResourceNotFoundException;
 @AllArgsConstructor
 @ToString
 public class Project {
+    private String name;
     private Set<DockerServiceDescription> availableServices = new HashSet<>();
     private Set<Composition> compositions = new HashSet<>();
 

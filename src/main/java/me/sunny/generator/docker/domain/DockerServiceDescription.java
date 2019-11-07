@@ -18,4 +18,10 @@ public class DockerServiceDescription {
     @NonNull
     private DockerService service;
     private List<String> versions = new ArrayList<>();
+
+
+    @Override
+    public String toString() {
+        return service.toString();
+    }
 }

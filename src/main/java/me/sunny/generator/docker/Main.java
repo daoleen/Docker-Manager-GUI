@@ -21,7 +21,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Main.primaryStage = primaryStage;
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("project/open-project.fxml"));
         primaryStage.setTitle("Docker-Compose Generator");
         primaryStage.setScene(new Scene(root));
         primaryStage.setOnCloseRequest(event -> exit());

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.VBox?>
-
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.MenuBar?>
-
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <VBox fx:id="mainContainer" alignment="CENTER" minHeight="100.0" minWidth="300.0" prefHeight="469.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.sunny.generator.docker.controller.MainController">
    <children>
@@ -23,18 +23,47 @@
                </Menu>
                <Menu mnemonicParsing="false" text="Help">
                    <items>
-                       <MenuItem mnemonicParsing="false" text="About MyHelloApp" onAction="#about" />
+                       <MenuItem mnemonicParsing="false" onAction="#about" text="About MyHelloApp" />
                    </items>
                </Menu>
            </menus>
        </MenuBar>
-      <TextField id="txtDockerComposeVersion" alignment="TOP_LEFT" maxWidth="-Infinity" prefHeight="26.0" prefWidth="82.0" text="2.1" />
-      <TableView id="tblComposeServices" prefHeight="468.0" prefWidth="612.0">
-        <columns>
-          <TableColumn fx:id="tblColServiceName" prefWidth="150.0" text="Service Name" />
-          <TableColumn fx:id="tblColVersion" prefWidth="75.0" text="Version" />
-          <TableColumn fx:id="tblColEditService" prefWidth="75.0" text="Edit" />
-        </columns>
-      </TableView>
+      <Label fx:id="lblProjectName" text="Project Name" textFill="#1c163c">
+         <font>
+            <Font size="26.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="10.0" top="5.0" />
+         </VBox.margin>
+      </Label>
+      <HBox prefHeight="514.0" prefWidth="612.0">
+         <children>
+            <VBox prefHeight="440.0" prefWidth="313.0">
+               <children>
+                  <Label text="Available Compositions" />
+                  <ListView fx:id="listCompositions" prefHeight="184.0" prefWidth="290.0" />
+                  <Label text="Available Hosts">
+                     <VBox.margin>
+                        <Insets top="15.0" />
+                     </VBox.margin>
+                  </Label>
+                  <ListView fx:id="listHosts" prefHeight="188.0" prefWidth="288.0" />
+               </children>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
+            </VBox>
+            <VBox prefHeight="440.0" prefWidth="345.0">
+               <children>
+                  <Label text="Available Services" />
+                  <ListView fx:id="listServices" prefHeight="394.0" prefWidth="322.0">
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </VBox.margin>
+                  </ListView>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
    </children>
 </VBox>
