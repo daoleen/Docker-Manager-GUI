@@ -32,7 +32,7 @@ public class CompositionController {
 
 
     @FXML
-    private ComboBox selComposition;
+    private ComboBox<Composition> selComposition;
 
     @FXML
     private ListView listAvailableServices;
@@ -199,11 +199,9 @@ public class CompositionController {
 
 
     public void applyComposition(ActionEvent actionEvent) {
-        Object selectedItem = selComposition.getSelectionModel().getSelectedItem();
+        Composition composition = selComposition.getSelectionModel().getSelectedItem();
 
-        if (selectedItem != null) {
-            Composition composition = (Composition) selectedItem;
-
+        if (composition != null) {
             if (emptyComposition.equals(composition)) {
                 log.warn("Empty composition");
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("dialog.fxml"));
@@ -270,12 +268,18 @@ public class CompositionController {
     }
 
 
-    public void compositionSelected(ActionEvent actionEvent) {
+    public void compositionSelected() {
         initTblSelectedServicesData();
     }
 
 
     public void close(ActionEvent actionEvent) {
         ((Stage) tblSelectedServices.getScene().getWindow()).close();
+    }
+
+
+    public void selectComposition(Composition composition) {
+        selComposition.getSelectionModel().select(composition);
+        compositionSelected();
     }
 }
