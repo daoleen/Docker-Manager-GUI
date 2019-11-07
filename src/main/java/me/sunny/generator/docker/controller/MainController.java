@@ -3,6 +3,7 @@ package me.sunny.generator.docker.controller;
 
 import java.io.IOException;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +13,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +37,18 @@ public class MainController {
     private ListView<DockerServiceDescription> listServices;
 
 
+    private Thread reloader = new Thread(() -> {
+        while (true) {
+            Platform.runLater(this::initData);
+
+            try {
+                Thread.sleep(5000L);
+            } catch (InterruptedException e) {
+            }
+        }
+    });
+
+
     @FXML
     public void initialize() {
         if (Context.project == null) {
@@ -43,6 +58,10 @@ public class MainController {
         }
 
         lblProjectName.setText(Context.project.getName());
+        reloader.start();
+    }
+
+    private void initData() {
         listCompositions.setItems(FXCollections.observableArrayList(Context.project.getCompositions()));
         listServices.setItems(FXCollections.observableArrayList(Context.project.getAvailableServices()));
     }
@@ -64,6 +83,7 @@ public class MainController {
 
 
     public void quit() {
+        reloader.interrupt();
         Main.exit();
     }
 
@@ -83,6 +103,32 @@ public class MainController {
         } catch (IOException ex) {
             log.error("Could not open window for service composition: {}", ex.getMessage());
             Context.showNotificationDialog("Error", "Could not open window for service composition", Alert.AlertType.ERROR);
+        }
+    }
+
+
+    // show service details window on double-click
+    public void onMouseClickedOnService(MouseEvent mouseEvent) {
+        if (MouseButton.PRIMARY.equals(mouseEvent.getButton()) && 2 == mouseEvent.getClickCount()) {
+            openDetailsWindow(listServices.getSelectionModel().getSelectedItem().getService().getName());
+        }
+    }
+
+
+
+    private void openDetailsWindow(String serviceName) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("service/details.fxml"));
+            Stage serviceDetailsStage = new Stage();
+            serviceDetailsStage.initModality(Modality.WINDOW_MODAL);
+            serviceDetailsStage.setTitle(serviceName);
+            serviceDetailsStage.setScene(new Scene(fxmlLoader.load()));
+            ServiceDetailsController serviceDetailsController = fxmlLoader.<ServiceDetailsController>getController();
+            serviceDetailsController.init(serviceName);
+            serviceDetailsStage.show();
+        } catch (IOException ex) {
+            log.error("Could not open window for details of service: {}", ex.getMessage());
+            Context.showNotificationDialog("Error", "Could not open window for details of service", Alert.AlertType.ERROR);
         }
     }
 }
