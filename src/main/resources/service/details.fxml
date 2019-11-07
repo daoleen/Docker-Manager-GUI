@@ -54,19 +54,20 @@
       </Label>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="9">
          <children>
-            <Button mnemonicParsing="false" text="Close" onAction="#close">
+            <Button mnemonicParsing="false" onAction="#close" text="Close">
                <HBox.margin>
                   <Insets right="50.0" />
                </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" style="-fx-background-color: #ff5724;" text="Edit Service" textFill="#2f1b1b" onAction="#editService">
+            <Button mnemonicParsing="false" onAction="#editService" style="-fx-background-color: #ff5724;" text="Edit Service" textFill="#2f1b1b">
                <HBox.margin>
                   <Insets right="50.0" />
                </HBox.margin>
             </Button>
-            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" style="-fx-background-color: #cbca44;" text="Create New Version" textFill="#04050d" onAction="#createVersion">
+            <Button mnemonicParsing="false" onAction="#deleteService" style="-fx-background-color: #000;" text="Delete Service" textFill="#e9ffee" />
+            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#createVersion" style="-fx-background-color: #cbca44;" text="Create New Version" textFill="#04050d">
                <HBox.margin>
-                  <Insets right="-150.0" />
+                  <Insets left="20.0" right="-30.0" />
                </HBox.margin></Button>
          </children></HBox>
    </children>
