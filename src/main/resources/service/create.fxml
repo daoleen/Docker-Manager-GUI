@@ -175,10 +175,10 @@
                     </children>
                 </VBox>
 
-                <TableView fx:id="tblEnvironments" editable="true" prefHeight="120.0" prefWidth="450.0">
+                <TableView fx:id="tblEnvironments" editable="true" prefHeight="103.0" prefWidth="519.0">
                     <columns>
                         <TableColumn fx:id="tblEnvironmentsColKey" editable="true" prefWidth="199.0" text="Key" />
-                        <TableColumn fx:id="tblEnvironmentsColValue" editable="true" prefWidth="187.0" text="Value" />
+                        <TableColumn fx:id="tblEnvironmentsColValue" editable="true" prefWidth="246.0" text="Value" />
                     </columns>
                     <HBox.margin>
                         <Insets left="10.0" />
