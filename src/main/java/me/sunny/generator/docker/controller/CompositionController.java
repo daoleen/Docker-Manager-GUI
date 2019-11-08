@@ -1,6 +1,7 @@
 package me.sunny.generator.docker.controller;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,13 +16,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.domain.*;
+import me.sunny.generator.docker.exception.ApplicationException;
 import me.sunny.generator.docker.exception.ResourceNotFoundException;
+import me.sunny.generator.docker.util.DockerComposeWriter;
 
 
 @Slf4j
@@ -281,5 +285,28 @@ public class CompositionController {
     public void selectComposition(Composition composition) {
         selComposition.getSelectionModel().select(composition);
         compositionSelected();
+    }
+
+
+    public void generateDockerCompose(ActionEvent actionEvent) {
+        if (selComposition.getSelectionModel().getSelectedItem() != null) {
+            Composition composition = selComposition.getSelectionModel().getSelectedItem();
+
+            FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("YAML file (*.yml)", "*.yml");
+            fileChooser.getExtensionFilters().add(extensionFilter);
+            fileChooser.setInitialFileName("docker-compose.yml");
+
+            File selectedFile = fileChooser.showSaveDialog(listAvailableServices.getScene().getWindow());
+
+            if (selectedFile != null) {
+                try {
+                    DockerComposeWriter.generateCompose(composition, selectedFile);
+                    Context.showNotificationDialog("File saved", "File was successfully generated", Alert.AlertType.INFORMATION);
+                } catch (ApplicationException e) {
+                    Context.showNotificationDialog("Error generating compose", e.getMessage(), Alert.AlertType.ERROR);
+                }
+            }
+        }
     }
 }
