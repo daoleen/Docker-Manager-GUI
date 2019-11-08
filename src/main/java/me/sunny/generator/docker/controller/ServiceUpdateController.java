@@ -233,9 +233,11 @@ public class ServiceUpdateController {
 
     private void initEnvironmentsTable() {
         TableColumn<Map.Entry<String, String>, String> tblEnvironmentsColKey = new TableColumn<>("Key");
+        tblEnvironmentsColKey.setPrefWidth(199d);
         tblEnvironmentsColKey.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getKey()));
 
         TableColumn<Map.Entry<String, String>, String> tblEnvironmentsColValue = new TableColumn<>("Value");
+        tblEnvironmentsColValue.setPrefWidth(246d);
         tblEnvironmentsColValue.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getValue()));
 
         tblEnvironments.getColumns().setAll(tblEnvironmentsColKey, tblEnvironmentsColValue);

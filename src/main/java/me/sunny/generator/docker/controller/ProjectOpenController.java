@@ -13,10 +13,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.exception.ApplicationException;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 @Slf4j
@@ -27,8 +28,20 @@ public class ProjectOpenController {
 
 
     public void createNewProject(MouseEvent mouseEvent) {
-        log.debug("Create new project clicked");
-        Context.initMockedProject();
+        Pair<Boolean, String> resultChoosingProjectName = chooseProjectName();
+
+        // if result is false then do nothing
+        if (!resultChoosingProjectName.getKey()) {
+            log.debug("User cancelled creating a new project");
+            return;
+        }
+
+        if (StringUtils.isEmpty(resultChoosingProjectName.getValue())) {
+            Context.showNotificationDialog("Error creating a new project", "Project name is not specified", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Context.createEmptyProject(resultChoosingProjectName.getValue());
         openMainWindow();
     }
 
@@ -72,5 +85,24 @@ public class ProjectOpenController {
 
     private void close() {
         ((Stage) listRecentProjects.getScene().getWindow()).close();
+    }
+
+
+    private Pair<Boolean, String> chooseProjectName() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("dialog.fxml"));
+        Stage dialogStage = new Stage();
+        dialogStage.initModality(Modality.APPLICATION_MODAL);
+        dialogStage.setTitle("Enter new project name");
+        try {
+            dialogStage.setScene(new Scene(fxmlLoader.load()));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            Context.showNotificationDialog("Error choosing new project name", e.getMessage(), Alert.AlertType.ERROR);
+        }
+        DialogController dialogController = fxmlLoader.<DialogController>getController();
+        dialogController.init("Please enter new composition name here", "");
+        dialogStage.showAndWait();
+
+        return new Pair<>(!dialogController.isCancelled(), dialogController.getContent());
     }
 }
