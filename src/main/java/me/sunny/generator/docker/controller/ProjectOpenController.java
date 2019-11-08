@@ -1,6 +1,7 @@
 package me.sunny.generator.docker.controller;
 
 
+import java.io.File;
 import java.io.IOException;
 
 import javafx.fxml.FXML;
@@ -9,10 +10,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
+import me.sunny.generator.docker.exception.ApplicationException;
+import org.apache.commons.io.FileUtils;
 
 
 @Slf4j
@@ -30,8 +34,19 @@ public class ProjectOpenController {
 
 
     public void openExistingProject(MouseEvent mouseEvent) {
-        log.debug("openExistingProject clicked");
-        Context.initMockedProject();
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("JSON file (*.json)", "*.json");
+        fileChooser.getExtensionFilters().add(extensionFilter);
+
+        File projectFile = fileChooser.showOpenDialog(listRecentProjects.getScene().getWindow());
+
+        try {
+            Context.deserializeProject(projectFile);
+        } catch (ApplicationException e) {
+            Context.showNotificationDialog("Error opening project", e.getMessage(), Alert.AlertType.ERROR);
+            return;
+        }
+
         openMainWindow();
     }
 
