@@ -1,6 +1,7 @@
 package me.sunny.generator.docker.controller;
 
 
+import java.io.File;
 import java.io.IOException;
 
 import javafx.application.Platform;
@@ -15,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,8 @@ import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.Main;
 import me.sunny.generator.docker.domain.Composition;
 import me.sunny.generator.docker.domain.DockerServiceDescription;
+import me.sunny.generator.docker.exception.ApplicationException;
+import org.apache.commons.io.FileUtils;
 
 
 @Slf4j
@@ -147,6 +151,38 @@ public class MainController {
         } catch (IOException ex) {
             log.error("Could not open window for details of service: {}", ex.getMessage());
             Context.showNotificationDialog("Error", "Could not open window for details of service", Alert.AlertType.ERROR);
+        }
+    }
+
+
+    public void closeProject(ActionEvent actionEvent) {
+        Context.project = null;
+        quit();
+    }
+
+
+    public void saveProject(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("JSON file (*.json)", "*.json");
+        fileChooser.getExtensionFilters().add(extensionFilter);
+
+        File selectedFile = fileChooser.showSaveDialog(lblProjectName.getScene().getWindow());
+
+        if (selectedFile != null) {
+            if (!selectedFile.getName().toLowerCase().endsWith(".json")) {
+                selectedFile = new File(selectedFile.getAbsolutePath() + ".json");
+            }
+
+            try {
+                Context.serializeProject(selectedFile);
+                Context.showNotificationDialog("Saved", "Project successfully saved to file",
+                        Alert.AlertType.INFORMATION);
+            } catch (ApplicationException e) {
+                log.error(e.getMessage(), e);
+                Context.showNotificationDialog("Error saving project", e.getMessage(), Alert.AlertType.ERROR);
+            }
+        } else {
+            log.warn("Nothing was selected");
         }
     }
 }

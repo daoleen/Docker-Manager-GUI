@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -11,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="mainContainer" alignment="CENTER" minHeight="100.0" minWidth="300.0" prefHeight="469.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.sunny.generator.docker.controller.MainController">
+<VBox fx:id="mainContainer" alignment="CENTER" minHeight="100.0" minWidth="300.0" prefHeight="541.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.sunny.generator.docker.controller.MainController">
    <children>
        <MenuBar VBox.vgrow="NEVER">
            <menus>
@@ -60,7 +61,7 @@
             <VBox prefHeight="440.0" prefWidth="345.0">
                <children>
                   <Label text="Available Services" />
-                  <ListView fx:id="listServices" onMouseClicked="#onMouseClickedOnService" prefHeight="394.0" prefWidth="322.0">
+                  <ListView fx:id="listServices" onMouseClicked="#onMouseClickedOnService" prefHeight="403.0" prefWidth="312.0">
                      <VBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </VBox.margin>
@@ -71,6 +72,18 @@
                </children>
             </VBox>
          </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Button alignment="CENTER" mnemonicParsing="false" style="-fx-background-color: #1b7524;" text="Save To File" textFill="white" onAction="#saveProject" />
+            <Button mnemonicParsing="false" style="-fx-background-color: #ffb435;" text="Close Project" textFill="#1b2522" onAction="#closeProject">
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin></Button>
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
       </HBox>
    </children>
 </VBox>
