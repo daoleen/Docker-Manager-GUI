@@ -245,7 +245,7 @@
             </rowConstraints>
             <children>
                 <Label text="Test Command" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <TextField fx:id="txtHealthcheckCommamd" prefHeight="26.0" prefWidth="365.0" promptText="[&quot;CMD&quot;, &quot;curl&quot;, &quot;http://servicename:8090/actuator/health&quot;]" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <TextField fx:id="txtHealthcheckCommamd" prefHeight="26.0" prefWidth="365.0" promptText="CMD curl http://servicename:8090/actuator/health" GridPane.columnIndex="1" GridPane.rowIndex="0">
                <font>
                   <Font size="11.0" />
                </font></TextField>

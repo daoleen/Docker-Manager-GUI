@@ -10,15 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javafx.scene.control.Alert;
 import lombok.extern.slf4j.Slf4j;
-import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.domain.Composition;
 import me.sunny.generator.docker.domain.DockerService;
 import me.sunny.generator.docker.domain.DockerServiceConcreted;
 import me.sunny.generator.docker.exception.ApplicationException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
 
@@ -96,9 +95,9 @@ public class DockerComposeWriter {
             serviceValueMap.put("depends_on", depends);
         }
 
-        if (service.getService().getHealthcheck() != null) {
-            Map<String, String> healthcheck = new HashMap<>(4);
-            healthcheck.put("test", service.getService().getHealthcheck().getTest());
+        if (service.getService().getHealthcheck() != null && StringUtils.isNotEmpty(service.getService().getHealthcheck().getTest())) {
+            Map<String, Object> healthcheck = new HashMap<>(4);
+            healthcheck.put("test", service.getService().getHealthcheck().getTest().split(" "));
             healthcheck.put("interval", service.getService().getHealthcheck().getIntervalSeconds() + "s");
             healthcheck.put("timeout", service.getService().getHealthcheck().getTimeoutSeconds() + "s");
             healthcheck.put("retries", Integer.toString(service.getService().getHealthcheck().getRetriesCount()));
