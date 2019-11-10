@@ -21,10 +21,11 @@
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.0" minWidth="10.0" prefWidth="482.0" />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints maxHeight="41.0" minHeight="10.0" prefHeight="11.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="115.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="193.0" minHeight="30.0" prefHeight="100.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="41.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="41.0" minHeight="6.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="115.0" minHeight="10.0" prefHeight="29.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="193.0" minHeight="30.0" prefHeight="98.0" vgrow="SOMETIMES" />
         <RowConstraints maxHeight="222.0" minHeight="30.0" prefHeight="100.0" vgrow="SOMETIMES" />
         <RowConstraints maxHeight="78.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
         <RowConstraints maxHeight="113.0" minHeight="30.0" prefHeight="109.0" vgrow="SOMETIMES" />
@@ -36,14 +37,17 @@
         <Label text="Name" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <TextField fx:id="txtName" promptText="Service name" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-        <Label text="Image" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <TextField fx:id="txtImage" promptText="Service image" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Label text="Build" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <TextField fx:id="txtBuild" promptText="Build Path" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-        <Label text="Restart" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <ComboBox fx:id="selRestart" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Label text="Image" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <TextField fx:id="txtImage" promptText="Service image" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-        <Label prefWidth="36.0" text="Ports" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+        <Label text="Restart" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <ComboBox fx:id="selRestart" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+        <Label prefWidth="36.0" text="Ports" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
             <children>
                 <VBox prefHeight="200.0" prefWidth="100.0">
                     <children>
@@ -79,8 +83,8 @@
             </padding>
         </HBox>
 
-        <Label text="Volumes" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <Label text="Volumes" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
             <children>
                 <VBox prefHeight="200.0" prefWidth="100.0">
                     <children>
@@ -116,8 +120,8 @@
             </GridPane.margin>
         </HBox>
 
-        <Label text="Links" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+        <Label text="Links" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
             <children>
                 <VBox prefHeight="56.0" prefWidth="149.0">
                     <children>
@@ -154,8 +158,8 @@
             </GridPane.margin>
         </HBox>
 
-        <Label text="Environments" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+        <Label text="Environments" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
             <children>
                 <VBox prefHeight="200.0" prefWidth="100.0">
                     <children>
@@ -191,8 +195,8 @@
             </padding>
         </HBox>
 
-        <Label text="Depends On" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+        <Label text="Depends On" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+        <HBox alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
             <children>
                 <VBox prefHeight="108.0" prefWidth="195.0">
                     <children>
@@ -230,8 +234,8 @@
             </GridPane.margin>
         </HBox>
 
-        <Label text="Healthcheck" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-        <GridPane prefHeight="51.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+        <Label text="Healthcheck" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+        <GridPane prefHeight="51.0" prefWidth="433.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="211.0" minWidth="10.0" prefWidth="127.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="379.0" minWidth="10.0" prefWidth="355.0" />
@@ -264,13 +268,13 @@
          </padding>
         </GridPane>
 
-        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="9">
+        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="10">
             <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#save" style="-fx-background-color: #1b7524;" text="Create" textAlignment="CENTER" textFill="WHITE">
                 <HBox.margin>
                     <Insets right="50.0" />
                 </HBox.margin>
             </Button>
-            <Button fx:id="btnCancel" mnemonicParsing="false" style="-fx-background-color: #b24e4e;" text="Cancel" textAlignment="CENTER" textFill="#ebe7db" />
+            <Button fx:id="btnCancel" mnemonicParsing="false" style="-fx-background-color: #b24e4e;" text="Cancel" textAlignment="CENTER" textFill="#ebe7db" onAction="#cancel" />
         </HBox>
 
     </children>

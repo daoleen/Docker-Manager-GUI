@@ -16,7 +16,8 @@
     </columnConstraints>
     <rowConstraints>
         <RowConstraints maxHeight="41.0" minHeight="10.0" prefHeight="11.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="41.0" minHeight="10.0" prefHeight="23.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
         <RowConstraints maxHeight="115.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         <RowConstraints maxHeight="193.0" minHeight="30.0" prefHeight="100.0" vgrow="SOMETIMES" />
         <RowConstraints maxHeight="222.0" minHeight="30.0" prefHeight="100.0" vgrow="SOMETIMES" />
@@ -28,23 +29,25 @@
     </rowConstraints>
    <children>
       <Label text="Name" />
-      <Label text="Image" GridPane.rowIndex="1" />
-      <Label text="Restart" GridPane.rowIndex="2" />
-      <Label text="Ports" GridPane.rowIndex="3" />
-      <Label text="Volumes" GridPane.rowIndex="4" />
-      <Label text="Links" GridPane.rowIndex="5" />
-      <Label text="Environment" GridPane.rowIndex="6" />
-      <Label text="Depends On" GridPane.rowIndex="7" />
-      <Label text="HealthCheck" GridPane.rowIndex="8" />
+      <Label text="Build Path" GridPane.rowIndex="1" />
+      <Label text="Image" GridPane.rowIndex="2" />
+      <Label text="Restart" GridPane.rowIndex="3" />
+      <Label text="Ports" GridPane.rowIndex="4" />
+      <Label text="Volumes" GridPane.rowIndex="5" />
+      <Label text="Links" GridPane.rowIndex="6" />
+      <Label text="Environment" GridPane.rowIndex="7" />
+      <Label text="Depends On" GridPane.rowIndex="8" />
+      <Label text="HealthCheck" GridPane.rowIndex="9" />
       <Label fx:id="lblName" GridPane.columnIndex="1" />
-      <Label fx:id="lblImage" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <Label fx:id="lblRestart" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <Label fx:id="lblPorts" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-      <Label fx:id="lblVolumes" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-      <Label fx:id="lblLinks" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-      <Label fx:id="lblEnvironment" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-      <Label fx:id="lblDepend" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-      <Label fx:id="lblHealthCheck" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+      <Label fx:id="lblBuild" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Label fx:id="lblImage" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Label fx:id="lblRestart" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <Label fx:id="lblPorts" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <Label fx:id="lblVolumes" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <Label fx:id="lblLinks" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      <Label fx:id="lblEnvironment" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+      <Label fx:id="lblDepend" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+      <Label fx:id="lblHealthCheck" GridPane.columnIndex="1" GridPane.rowIndex="9" />
 
       <Label text="Versions" GridPane.columnIndex="2" GridPane.rowIndex="0" />
       <Label fx:id="lblVersions" alignment="TOP_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="8" GridPane.valignment="TOP">
@@ -52,7 +55,7 @@
             <Insets top="10.0" />
          </GridPane.margin>
       </Label>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="9">
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="10">
          <children>
             <Button mnemonicParsing="false" onAction="#close" text="Close">
                <HBox.margin>

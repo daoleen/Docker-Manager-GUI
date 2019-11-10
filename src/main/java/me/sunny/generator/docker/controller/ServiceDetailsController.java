@@ -28,6 +28,9 @@ public class ServiceDetailsController {
     private Label lblName;
 
     @FXML
+    private Label lblBuild;
+
+    @FXML
     private Label lblImage;
 
     @FXML
@@ -95,6 +98,7 @@ public class ServiceDetailsController {
 
 
         lblName.setText(dockerServiceDescription.getService().getName());
+        lblBuild.setText(dockerServiceDescription.getService().getBuildPath());
         lblImage.setText(dockerServiceDescription.getService().getImage());
         lblRestart.setText(dockerServiceDescription.getService().getRestart().toString());
         lblPorts.setText(ports);

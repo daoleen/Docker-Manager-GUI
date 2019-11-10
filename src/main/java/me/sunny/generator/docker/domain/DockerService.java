@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import lombok.*;
 import me.sunny.generator.docker.enums.DockerRestartOption;
+import org.apache.commons.lang3.StringUtils;
 
 
 @Getter
@@ -30,6 +31,6 @@ public class DockerService {
 
     @Override
     public String toString() {
-        return String.format("%s [%s]", name, image);
+        return String.format("%s [%s]", name, StringUtils.isNoneBlank(image) ? image : buildPath);
     }
 }

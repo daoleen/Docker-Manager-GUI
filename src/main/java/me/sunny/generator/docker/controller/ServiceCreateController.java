@@ -45,6 +45,9 @@ public class ServiceCreateController {
     private TextField txtName;
 
     @FXML
+    private TextField txtBuild;
+
+    @FXML
     private TextField txtImage;
 
     @FXML
@@ -366,7 +369,7 @@ public class ServiceCreateController {
 
         Set<UUID> linksSet = linkServices.stream().map(DockerService::getId).collect(Collectors.toSet());
 
-        DockerService createdService = new DockerService(UUID.randomUUID(), txtName.getText(), txtImage.getText(), "", restartOption, portMappings,
+        DockerService createdService = new DockerService(UUID.randomUUID(), txtName.getText(), txtImage.getText(), txtBuild.getText(), restartOption, portMappings,
                         volumeMappings, environmentVars, dependServices, linksSet, healthchek);
 
         Context.project.getAvailableServices().add(new DockerServiceDescription(createdService));
@@ -385,11 +388,21 @@ public class ServiceCreateController {
             serviceDetailsController.init(serviceName);
             serviceDetailsStage.show();
 
-            ((Stage) txtName.getScene().getWindow()).close();
+            close();
         } catch (IOException ex) {
             log.error("Could not open window for details of service: {}", ex.getMessage());
             Context.showNotificationDialog("Error", "Could not open window for details of service", Alert.AlertType.ERROR);
         }
+    }
+
+
+    public void cancel(ActionEvent actionEvent) {
+        close();
+    }
+
+
+    private void close() {
+        ((Stage) txtName.getScene().getWindow()).close();
     }
 
 
