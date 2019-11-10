@@ -71,7 +71,7 @@ public class ServiceDetailsController {
                 .map(DockerVolumeMapping::toString)
                 .collect(Collectors.joining("\n"));
 
-        String links = dockerServiceDescription.getService().getLinks().stream()
+        String links = Context.project.findAllServicesByIds(dockerServiceDescription.getService().getLinks()).stream()
                 .map(DockerService::getName)
                 .collect(Collectors.joining("\n"));
 

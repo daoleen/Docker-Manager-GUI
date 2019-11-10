@@ -3,18 +3,11 @@ package me.sunny.generator.docker;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.control.Alert;
-import me.sunny.generator.docker.domain.*;
-import me.sunny.generator.docker.enums.DockerDependCondition;
+import me.sunny.generator.docker.domain.Project;
 import me.sunny.generator.docker.exception.ApplicationException;
-import org.apache.commons.lang3.StringUtils;
 
 
 public class Context {
