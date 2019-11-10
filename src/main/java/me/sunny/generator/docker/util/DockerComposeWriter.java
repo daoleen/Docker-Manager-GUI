@@ -64,7 +64,20 @@ public class DockerComposeWriter {
             return;
         }
 
-        serviceValueMap.put("image", service.getImage() + ":" + serviceConcreted.getVersion());
+        if (StringUtils.isNotBlank(service.getBuildPath())) {
+            serviceValueMap.put("build", service.getBuildPath());
+        }
+
+        if (StringUtils.isNotBlank(service.getImage())) {
+            String image = service.getImage();
+
+            if (StringUtils.isNotBlank(serviceConcreted.getVersion())) {
+                image += ":" + serviceConcreted.getVersion();
+            }
+
+            serviceValueMap.put("image", image);
+        }
+
         serviceValueMap.put("restart", service.getRestart().toString());
 
         if (CollectionUtils.isNotEmpty(service.getPorts())) {

@@ -48,6 +48,9 @@ public class ServiceUpdateController {
     private TextField txtName;
 
     @FXML
+    private TextField txtBuild;
+
+    @FXML
     private TextField txtImage;
 
     @FXML
@@ -129,6 +132,7 @@ public class ServiceUpdateController {
 
     private void initDefaultValues() {
         txtName.setText(service.getName());
+        txtBuild.setText(service.getBuildPath());
         txtImage.setText(service.getImage());
         selRestart.getSelectionModel().select(service.getRestart());
 
@@ -403,8 +407,8 @@ public class ServiceUpdateController {
 
 
         service.setName(txtName.getText());
+        service.setBuildPath(txtBuild.getText());
         service.setImage(txtImage.getText());
-        service.setBuildPath("");
         service.setRestart(restartOption);
         service.setPorts(portMappings);
         service.setVolumes(volumeMappings);
