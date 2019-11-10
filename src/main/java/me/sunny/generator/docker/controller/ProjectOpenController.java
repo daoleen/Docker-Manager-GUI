@@ -53,14 +53,16 @@ public class ProjectOpenController {
 
         File projectFile = fileChooser.showOpenDialog(listRecentProjects.getScene().getWindow());
 
-        try {
-            Context.deserializeProject(projectFile);
-        } catch (ApplicationException e) {
-            Context.showNotificationDialog("Error opening project", e.getMessage(), Alert.AlertType.ERROR);
-            return;
-        }
+        if (projectFile != null) {
+            try {
+                Context.deserializeProject(projectFile);
+            } catch (ApplicationException e) {
+                Context.showNotificationDialog("Error opening project", e.getMessage(), Alert.AlertType.ERROR);
+                return;
+            }
 
-        openMainWindow();
+            openMainWindow();
+        }
     }
 
 

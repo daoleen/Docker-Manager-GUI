@@ -30,7 +30,7 @@ import me.sunny.generator.docker.util.DockerComposeWriter;
 
 @Slf4j
 public class CompositionController {
-    private final ObservableList<DockerServiceConcreted> selectedConcretedServices = FXCollections.observableArrayList();
+    private final ObservableList<DockerServiceConcreted> selectedConcretedServices = FXCollections.observableList(new ArrayList<>());
     private final Composition emptyComposition = new Composition("--- New Composition ---", null);
     private ObservableList<Composition> compositions;
 
@@ -39,10 +39,10 @@ public class CompositionController {
     private ComboBox<Composition> selComposition;
 
     @FXML
-    private ListView listAvailableServices;
+    private ListView<DockerService> listAvailableServices;
 
     @FXML
-    private TableView tblSelectedServices;
+    private TableView<DockerServiceConcreted> tblSelectedServices;
 
     @FXML
     private TableColumn<DockerServiceConcreted, String> tblSelectedServicesColService;
@@ -61,7 +61,15 @@ public class CompositionController {
 
     private void initTblSelectedServices() {
         tblSelectedServices.setEditable(true);
-        tblSelectedServicesColService.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getService().getName()));
+        tblSelectedServicesColService.setCellValueFactory(cellData -> {
+            try {
+                String name = Context.project.findService(cellData.getValue().getServiceId()).getService().getName();
+                return new SimpleStringProperty(name);
+            } catch (ResourceNotFoundException e) {
+                log.error(e.getMessage());
+            }
+            return null;
+        });
         tblSelectedServicesColVersion.setCellValueFactory(new PropertyValueFactory<>("version"));
 
         Callback<TableColumn<DockerServiceConcreted, String>, TableCell<DockerServiceConcreted, String>> cellVersionCallback = new Callback<TableColumn<DockerServiceConcreted, String>, TableCell<DockerServiceConcreted, String>>() {
@@ -77,7 +85,15 @@ public class CompositionController {
                         } else {
                             ComboBox<String> comboBox = new ComboBox<>();
                             DockerServiceConcreted dockerServiceConcretedSelected = getTableView().getItems().get(getIndex());
-                            String selectedService = dockerServiceConcretedSelected.getService().getName();
+                            UUID selectedService = null;
+                            try {
+                                selectedService =
+                                        Context.project.findService(dockerServiceConcretedSelected.getServiceId()).getService().getId();
+                            } catch (ResourceNotFoundException e) {
+                                log.error(e.getMessage());
+                                return;
+                            }
+
                             List<String> versions = null;
                             try {
                                 versions = Context.project.findService(selectedService).getVersions();
@@ -86,18 +102,18 @@ public class CompositionController {
                                 versions = Collections.emptyList();
                             }
 
-                            comboBox.setItems(FXCollections.observableArrayList(versions));
+                            comboBox.setItems(FXCollections.observableList(versions));
                             comboBox.setOnAction(event -> {
                                 dockerServiceConcretedSelected.setVersion(comboBox.getSelectionModel().getSelectedItem());
                             });
 
+                            UUID finalSelectedService = selectedService;
                             tblSelectedServices.getItems()
                                     .stream()
-                                    .filter(s -> ((DockerServiceConcreted) s).getService().getName()
-                                            .equals(selectedService))
+                                    .filter(s -> Objects.equals(s.getServiceId(), finalSelectedService))
                                     .findFirst()
                                     .ifPresent(serviceConcreted -> {
-                                        String version = ((DockerServiceConcreted) serviceConcreted).getVersion();
+                                        String version = serviceConcreted.getVersion();
                                         comboBox.getSelectionModel().select(version);
                                     });
 
@@ -123,7 +139,7 @@ public class CompositionController {
         ArrayList<Composition> compositions = new ArrayList<>(Context.project.getCompositions().size() + 1);
         compositions.add(emptyComposition);
         compositions.addAll(Context.project.getCompositions());
-        this.compositions = FXCollections.observableArrayList(compositions);
+        this.compositions = FXCollections.observableList(compositions);
 
         selComposition.setItems(this.compositions);
         selComposition.getSelectionModel().select(emptyComposition);
@@ -143,27 +159,25 @@ public class CompositionController {
                         .filter(availableService -> {
                             // exclude services from selected table
                             return tblSelectedServices.getItems().stream()
-                                    .noneMatch(concreteService -> ((DockerServiceConcreted)concreteService).getService().equals(availableService));
+                                    .noneMatch(concreteService -> concreteService.getServiceId().equals(availableService.getId()));
                         })
                         .collect(Collectors.toList()));
     }
 
 
     public void addConcretedService(ActionEvent actionEvent) {
-        Object selectedItem = listAvailableServices.getSelectionModel().getSelectedItem();
+        DockerService selectedService = listAvailableServices.getSelectionModel().getSelectedItem();
 
-        if (selectedItem != null) {
-            DockerService selectedService = (DockerService) selectedItem;
-
+        if (selectedService != null) {
             if (selectedService.getDepends() != null && (!selectedService.getDepends().isEmpty())) {
                 selectedService.getDepends().forEach(depend -> {
-                    if (selectedConcretedServices.stream().noneMatch(cs -> ((DockerServiceConcreted) cs).getService().equals(depend.getService()))) {
-                        addDockerServiceToConcreted(depend.getService());
+                    if (selectedConcretedServices.stream().noneMatch(cs -> cs.getServiceId().equals(depend.getServiceId()))) {
+                        addDockerServiceToConcreted(depend.getServiceId());
                     }
                 });
             }
 
-            addDockerServiceToConcreted(selectedService);
+            addDockerServiceToConcreted(selectedService.getId());
         }
 
         // reinit available services list
@@ -171,16 +185,16 @@ public class CompositionController {
     }
 
 
-    private void addDockerServiceToConcreted(DockerService selectedService) {
+    private void addDockerServiceToConcreted(UUID serviceId) {
         List<String> versions = null;
         try {
-            versions = Context.project.findService(selectedService.getName()).getVersions();
+            versions = Context.project.findService(serviceId).getVersions();
         } catch (ResourceNotFoundException e) {
             log.error(e.getMessage(), e);
             versions = Collections.emptyList();
         }
 
-        DockerServiceConcreted concretedService = new DockerServiceConcreted(selectedService, (versions.isEmpty() ? null : versions.get(versions.size() - 1)));
+        DockerServiceConcreted concretedService = new DockerServiceConcreted(serviceId, (versions.isEmpty() ? null : versions.get(versions.size() - 1)));
 
         if (!selectedConcretedServices.contains(concretedService)) {
             selectedConcretedServices.add(concretedService);
@@ -189,11 +203,9 @@ public class CompositionController {
 
 
     public void removeConcretedService(ActionEvent actionEvent) {
-        Object selectedItem = tblSelectedServices.getSelectionModel().getSelectedItem();
+        DockerServiceConcreted selectedServiceConcreted = tblSelectedServices.getSelectionModel().getSelectedItem();
 
-        if (selectedItem != null) {
-            DockerServiceConcreted selectedServiceConcreted = (DockerServiceConcreted) selectedItem;
-
+        if (selectedServiceConcreted != null) {
             tblSelectedServices.getItems().remove(selectedServiceConcreted);
         }
 
@@ -242,28 +254,33 @@ public class CompositionController {
 
 
     private void initTblSelectedServicesData() {
-        Object selectedComposition = selComposition.getSelectionModel().getSelectedItem();
+        Composition composition = selComposition.getSelectionModel().getSelectedItem();
         selectedConcretedServices.clear();
 
-        if (selectedComposition != null && !emptyComposition.equals(selectedComposition)) {
-            // load composition services
-            Composition composition = (Composition) selectedComposition;
-
+        if (composition != null && !emptyComposition.equals(composition)) {
             // add all concreted services (services with specified version)
             selectedConcretedServices.addAll(composition.getServices());
 
             composition.getServices().stream()
                     .flatMap(serviceConcreted -> {
-                        if (serviceConcreted.getService().getDepends() != null && !serviceConcreted.getService().getDepends().isEmpty()) {
-                            return serviceConcreted.getService().getDepends().stream();
+                        DockerService service = null;
+                        try {
+                            service = Context.project.findService(serviceConcreted.getServiceId()).getService();
+                        } catch (ResourceNotFoundException e) {
+                            log.error(e.getMessage());
+                            return Stream.empty();
+                        }
+
+                        if (service.getDepends() != null && !service.getDepends().isEmpty()) {
+                            return service.getDepends().stream();
                         }
                         return Stream.empty();
                     })
-                    .map(DockerDepend::getService)
+                    .map(DockerDepend::getServiceId)
                     .distinct()
-                    .forEach(srv -> {
-                        if (selectedConcretedServices.stream().map(DockerServiceConcreted::getService).noneMatch(selectedService -> selectedService.getName().equals(srv.getName()))) {
-                            addDockerServiceToConcreted(srv);
+                    .forEach(srvId -> {
+                        if (selectedConcretedServices.stream().map(DockerServiceConcreted::getServiceId).noneMatch(selectedServiceId -> selectedServiceId.equals(srvId))) {
+                            addDockerServiceToConcreted(srvId);
                         }
                     });
         }
@@ -291,6 +308,11 @@ public class CompositionController {
     public void generateDockerCompose(ActionEvent actionEvent) {
         if (selComposition.getSelectionModel().getSelectedItem() != null) {
             Composition composition = selComposition.getSelectionModel().getSelectedItem();
+
+            if (emptyComposition.equals(composition)) {
+                Context.showNotificationDialog("Action not allowed", "You should apply composition to project first", Alert.AlertType.WARNING);
+                return;
+            }
 
             FileChooser fileChooser = new FileChooser();
             FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("YAML file (*.yml)", "*.yml");

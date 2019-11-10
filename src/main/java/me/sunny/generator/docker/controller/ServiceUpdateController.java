@@ -2,9 +2,7 @@ package me.sunny.generator.docker.controller;
 
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javafx.application.Platform;
@@ -53,10 +51,10 @@ public class ServiceUpdateController {
     private TextField txtImage;
 
     @FXML
-    private ComboBox selRestart;
+    private ComboBox<DockerRestartOption> selRestart;
 
     @FXML
-    private TableView tblPorts;
+    private TableView<DockerPortMapping> tblPorts;
 
     @FXML
     private TableColumn<DockerPortMapping, Integer> tblPortsColHost;
@@ -65,7 +63,7 @@ public class ServiceUpdateController {
     private TableColumn<DockerPortMapping, Integer> tblPortsColContainer;
 
     @FXML
-    private TableView tblVolumes;
+    private TableView<DockerVolumeMapping> tblVolumes;
 
     @FXML
     private TableColumn<DockerVolumeMapping, String> tblVolumesColHost;
@@ -74,22 +72,22 @@ public class ServiceUpdateController {
     private TableColumn<DockerVolumeMapping, String> tblVolumesColContainer;
 
     @FXML
-    private ComboBox selLinks;
+    private ComboBox<DockerService> selLinks;
 
     @FXML
-    private ListView listLinks;
+    private ListView<DockerService> listLinks;
 
     @FXML
-    private TableView tblEnvironments;
+    private TableView<Map.Entry<String, String>> tblEnvironments;
 
     @FXML
-    private ListView listDepends;
+    private ListView<DockerDepend> listDepends;
 
     @FXML
-    private ComboBox selDepends;
+    private ComboBox<DockerService> selDepends;
 
     @FXML
-    private ComboBox selDependsCondition;
+    private ComboBox<DockerDependCondition> selDependsCondition;
 
     @FXML
     private TextField txtHealthcheckCommamd;
@@ -136,7 +134,10 @@ public class ServiceUpdateController {
 
         ports = FXCollections.observableArrayList(service.getPorts());
         volumes = FXCollections.observableArrayList(service.getVolumes());
-        links = FXCollections.observableArrayList(service.getLinks());
+
+        Set<DockerService> linkServices = Context.project.findAllServicesByIds(service.getLinks());
+        links = FXCollections.observableArrayList(linkServices);
+
         environments = FXCollections.observableArrayList(service.getEnvironment().entrySet());
         depends = FXCollections.observableArrayList(service.getDepends());
 
@@ -300,7 +301,7 @@ public class ServiceUpdateController {
 
 
     public void removePort(ActionEvent actionEvent) {
-        Object selectedItem = tblPorts.getSelectionModel().getSelectedItem();
+        DockerPortMapping selectedItem = tblPorts.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             Platform.runLater(() -> ports.remove(selectedItem));
         }
@@ -315,7 +316,7 @@ public class ServiceUpdateController {
 
 
     public void removeVolume(ActionEvent actionEvent) {
-        Object selectedItem = tblVolumes.getSelectionModel().getSelectedItem();
+        DockerVolumeMapping selectedItem = tblVolumes.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             Platform.runLater(() -> volumes.remove(selectedItem));
         }
@@ -323,7 +324,7 @@ public class ServiceUpdateController {
 
 
     public void addLink(ActionEvent actionEvent) {
-        Object selectedItem = selLinks.getSelectionModel().getSelectedItem();
+        DockerService selectedItem = selLinks.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             Platform.runLater(() -> links.add((DockerService) selectedItem));
         }
@@ -331,7 +332,7 @@ public class ServiceUpdateController {
 
 
     public void removeLink(ActionEvent actionEvent) {
-        Object selectedItem = selLinks.getSelectionModel().getSelectedItem();
+        DockerService selectedItem = selLinks.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             Platform.runLater(() -> links.remove(selectedItem));
         }
@@ -344,7 +345,7 @@ public class ServiceUpdateController {
 
 
     public void removeEnvironment(ActionEvent actionEvent) {
-        Object selectedItem = tblEnvironments.getSelectionModel().getSelectedItem();
+        Map.Entry<String, String> selectedItem = tblEnvironments.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             Platform.runLater(() -> environments.remove(selectedItem));
         }
@@ -352,16 +353,16 @@ public class ServiceUpdateController {
 
 
     public void addDepends(ActionEvent actionEvent) {
-        Object selectedService = selDepends.getSelectionModel().getSelectedItem();
-        Object selectedCondition = selDependsCondition.getSelectionModel().getSelectedItem();
+        DockerService selectedService = selDepends.getSelectionModel().getSelectedItem();
+        DockerDependCondition selectedCondition = selDependsCondition.getSelectionModel().getSelectedItem();
         if (selectedService != null && selectedCondition != null) {
-            Platform.runLater(() -> depends.add(new DockerDepend((DockerService) selectedService, (DockerDependCondition) selectedCondition)));
+            Platform.runLater(() -> depends.add(new DockerDepend(selectedService.getId(), selectedCondition)));
         }
     }
 
 
     public void removeDepends(ActionEvent actionEvent) {
-        Object selectedItem = listDepends.getSelectionModel().getSelectedItem();
+        DockerDepend selectedItem = listDepends.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             Platform.runLater(() -> depends.remove(selectedItem));
         }
@@ -409,7 +410,10 @@ public class ServiceUpdateController {
         service.setVolumes(volumeMappings);
         service.setEnvironment(environmentVars);
         service.setDepends(dependServices);
-        service.setLinks(linkServices);
+
+        Set<UUID> links = linkServices.stream().map(DockerService::getId).collect(Collectors.toSet());
+        service.setLinks(links);
+
         service.setHealthcheck(healthchek);
 
         openDetailsWindow(service.getName());
