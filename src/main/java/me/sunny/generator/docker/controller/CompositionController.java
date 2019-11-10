@@ -26,6 +26,7 @@ import me.sunny.generator.docker.domain.*;
 import me.sunny.generator.docker.exception.ApplicationException;
 import me.sunny.generator.docker.exception.ResourceNotFoundException;
 import me.sunny.generator.docker.util.DockerComposeWriter;
+import org.apache.commons.collections4.CollectionUtils;
 
 
 @Slf4j
@@ -170,11 +171,7 @@ public class CompositionController {
 
         if (selectedService != null) {
             if (selectedService.getDepends() != null && (!selectedService.getDepends().isEmpty())) {
-                selectedService.getDepends().forEach(depend -> {
-                    if (selectedConcretedServices.stream().noneMatch(cs -> cs.getServiceId().equals(depend.getServiceId()))) {
-                        addDockerServiceToConcreted(depend.getServiceId());
-                    }
-                });
+                addDepends(selectedService.getDepends());
             }
 
             addDockerServiceToConcreted(selectedService.getId());
@@ -182,6 +179,25 @@ public class CompositionController {
 
         // reinit available services list
         initAvailableServices();
+    }
+
+
+    private void addDepends(Set<DockerDepend> depends) {
+        depends.forEach(depend -> {
+            if (selectedConcretedServices.stream().noneMatch(cs -> cs.getServiceId().equals(depend.getServiceId()))) {
+                addDockerServiceToConcreted(depend.getServiceId());
+            }
+
+            DockerService dependService = null;
+            try {
+                dependService = Context.project.findService(depend.getServiceId()).getService();
+                if (CollectionUtils.isNotEmpty(dependService.getDepends())) {
+                    addDepends(dependService.getDepends());
+                }
+            } catch (ResourceNotFoundException e) {
+                log.error(e.getMessage());
+            }
+        });
     }
 
 
