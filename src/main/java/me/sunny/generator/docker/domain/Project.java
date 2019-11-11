@@ -24,6 +24,7 @@ public class Project {
 
     private Set<DockerServiceDescription> availableServices = new HashSet<>();
     private Set<Composition> compositions = new HashSet<>();
+    private Set<Host> hosts = new HashSet<>();
 
 
     public DockerServiceDescription findService(String serviceName) throws ResourceNotFoundException {
