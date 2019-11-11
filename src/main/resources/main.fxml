@@ -23,6 +23,11 @@
                        <MenuItem fx:id="mnuQuit" mnemonicParsing="false" onAction="#quit" text="Quit" />
                    </items>
                </Menu>
+               <Menu mnemonicParsing="false" text="Host">
+                   <items>
+                       <MenuItem mnemonicParsing="false" onAction="#addNewHost" text="Add a new host" />
+                   </items>
+               </Menu>
                <Menu mnemonicParsing="false" text="Help">
                    <items>
                        <MenuItem mnemonicParsing="false" onAction="#about" text="About MyHelloApp" />

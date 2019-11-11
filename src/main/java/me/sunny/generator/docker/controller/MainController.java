@@ -24,6 +24,7 @@ import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.Main;
 import me.sunny.generator.docker.domain.Composition;
 import me.sunny.generator.docker.domain.DockerServiceDescription;
+import me.sunny.generator.docker.domain.Host;
 import me.sunny.generator.docker.exception.ApplicationException;
 import org.apache.commons.io.FileUtils;
 
@@ -39,6 +40,9 @@ public class MainController {
 
     @FXML
     private ListView<DockerServiceDescription> listServices;
+
+    @FXML
+    private ListView<Host> listHosts;
 
 
     private Thread reloader = new Thread(() -> {
@@ -68,6 +72,7 @@ public class MainController {
     private void initData() {
         listCompositions.setItems(FXCollections.observableArrayList(Context.project.getCompositions()));
         listServices.setItems(FXCollections.observableArrayList(Context.project.getAvailableServices()));
+        listHosts.setItems(FXCollections.observableArrayList(Context.project.getHosts()));
     }
 
 
@@ -184,5 +189,31 @@ public class MainController {
         } else {
             log.warn("Nothing was selected");
         }
+    }
+
+
+    public void addNewHost(ActionEvent actionEvent) {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("dialog.fxml"));
+        Stage dialogStage = new Stage();
+        dialogStage.initModality(Modality.APPLICATION_MODAL);
+        dialogStage.setTitle("Specify a new docker host");
+        try {
+            dialogStage.setScene(new Scene(fxmlLoader.load()));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            Context.showNotificationDialog("Error creating a new host", e.getMessage(), Alert.AlertType.ERROR);
+            return;
+        }
+
+        DialogController dialogController = fxmlLoader.<DialogController>getController();
+        dialogController.init("Enter Docker Host (ex: tcp://localhost:2375)", "");
+        dialogStage.showAndWait();
+
+        if (dialogController.isCancelled()) {
+            log.debug("Skip creating a new docker host because it was cancelled by user");
+            return;
+        }
+
+        Context.project.getHosts().add(new Host(dialogController.getContent()));
     }
 }
