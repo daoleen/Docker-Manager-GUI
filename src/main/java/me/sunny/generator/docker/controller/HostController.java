@@ -2,6 +2,7 @@ package me.sunny.generator.docker.controller;
 
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import com.github.dockerjava.api.DockerClient;
@@ -15,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
@@ -34,6 +36,7 @@ public class HostController {
     private Host host;
     private DockerContainerService dockerContainerService;
     private DockerContainerRunner dockerContainerRunner;
+    private volatile boolean connectionInitialized;
 
 
     @FXML
@@ -65,11 +68,13 @@ public class HostController {
             } catch (InterruptedException e) {
             }
 
-            Platform.runLater(() -> {
-                initRunningContainers();
-                initTblSelectedServices();
-                initAvailableServices();
-            });
+            if (connectionInitialized) {
+                Platform.runLater(() -> {
+                    initRunningContainers();
+                    initTblSelectedServices();
+                    initAvailableServices();
+                });
+            }
         }
     });
 
@@ -84,6 +89,14 @@ public class HostController {
         lblTitle.setText(String.format("Host %s overview", host.getAddress()));
         listAvailableCompositions.setItems(FXCollections.observableArrayList(Context.project.getCompositions()));
 
+        initDocker();
+        initHostStatusObserver();
+
+        reloader.start();
+    }
+
+
+    private void initDocker() {
         DefaultDockerClientConfig clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder()
                 .withDockerHost(this.host.getAddress())
                 .build();
@@ -91,9 +104,41 @@ public class HostController {
         DockerClient dockerClient = DockerClientBuilder.getInstance(clientConfig).build();
         dockerContainerService = ServiceFactory.getDockerContainerService(dockerClient);
         dockerContainerRunner = ServiceFactory.getDockerContainerRunner(dockerContainerService);
-        initHostStatusObserver();
 
-        reloader.start();
+        pingDocker(dockerClient);
+    }
+
+
+    private void pingDocker(DockerClient dockerClient) {
+        new Thread(() -> {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+
+            Future<?> pingTask = executor.submit(() -> {
+                Platform.runLater(() -> {
+                    lblStatus.setText("Connecting to docker host: " + this.host.getAddress());
+                });
+
+                dockerClient.pingCmd().exec();
+                connectionInitialized = true;
+
+                Platform.runLater(() -> {
+                    lblStatus.setText("Docker host connected");
+                });
+            });
+
+            try {
+                pingTask.get(30, TimeUnit.SECONDS);
+            } catch (TimeoutException | InterruptedException | ExecutionException ex) {
+                Platform.runLater(() -> {
+                    log.error("Could not connect to docker daemon", ex);
+                    Context.showNotificationDialog("Could not connect to server",
+                            "Could not connect to docker daemon", Alert.AlertType.ERROR);
+                    close();
+                });
+            } finally {
+                executor.shutdown();
+            }
+        }).start();
     }
 
 
@@ -316,5 +361,10 @@ public class HostController {
                 Context.HOST_STATUS_OBSERVABLE.notifyObservers(String.format("Composition %s has been stopped", composition.getName()));
             }).start();
         }
+    }
+
+
+    private void close() {
+        ((Stage)lblTitle.getScene().getWindow()).close();
     }
 }
