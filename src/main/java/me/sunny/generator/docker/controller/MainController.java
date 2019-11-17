@@ -122,6 +122,14 @@ public class MainController {
     }
 
 
+    // show host management window on double-click
+    public void onMouseClickedOnHost(MouseEvent mouseEvent) {
+        if (MouseButton.PRIMARY.equals(mouseEvent.getButton()) && 2 == mouseEvent.getClickCount()) {
+            openHostWindow(listHosts.getSelectionModel().getSelectedItem());
+        }
+    }
+
+
     private void openServiceCompositionWindow(Composition composition) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("composition.fxml"));
@@ -157,6 +165,25 @@ public class MainController {
             log.error("Could not open window for details of service: {}", ex.getMessage());
             Context.showNotificationDialog("Error", "Could not open window for details of service", Alert.AlertType.ERROR);
         }
+    }
+
+
+    private void openHostWindow(Host host) {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("host/host.fxml"));
+        Stage stage = new Stage();
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setTitle("Host management");
+        try {
+            stage.setScene(new Scene(fxmlLoader.load()));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            Context.showNotificationDialog("Error opening host window", e.getMessage(), Alert.AlertType.ERROR);
+            return;
+        }
+
+        HostController hostController = fxmlLoader.<HostController>getController();
+        hostController.init(host);
+        stage.show();
     }
 
 
