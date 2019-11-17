@@ -54,6 +54,9 @@ public class HostController {
     @FXML
     private TableColumn<DockerServiceConcreted, String> tblSelectedServicesColVersion;
 
+    @FXML
+    private Label lblStatus;
+
 
     private Thread reloader = new Thread(() -> {
         while (true) {
@@ -88,7 +91,18 @@ public class HostController {
         DockerClient dockerClient = DockerClientBuilder.getInstance(clientConfig).build();
         dockerContainerService = ServiceFactory.getDockerContainerService(dockerClient);
         dockerContainerRunner = ServiceFactory.getDockerContainerRunner(dockerContainerService);
+        initHostStatusObserver();
+
         reloader.start();
+    }
+
+
+    private void initHostStatusObserver() {
+        Observer hostStatusObserver = ((o, arg) -> {
+            Platform.runLater(() -> lblStatus.setText(arg.toString()));
+        });
+
+        Context.HOST_STATUS_OBSERVABLE.addObserver(hostStatusObserver);
     }
 
 
@@ -188,14 +202,18 @@ public class HostController {
         DockerContainer container = listRunningContainers.getSelectionModel().getSelectedItem();
 
         if (container != null) {
-            stopContainer(container);
+            new Thread(() -> {
+                stopContainer(container);
+            }).start();
         }
     }
 
 
     private void stopContainer(DockerContainer container) {
+        Context.HOST_STATUS_OBSERVABLE.notifyObservers("Stopping container: " + container);
         dockerContainerService.stop(container.getId());
         dockerContainerService.remove(container.getId());
+        Context.HOST_STATUS_OBSERVABLE.notifyObservers(String.format("Container `%s` stopped", container));
     }
 
 
@@ -203,12 +221,17 @@ public class HostController {
         DockerServiceConcreted serviceConcreted = tblSelectedServices.getSelectionModel().getSelectedItem();
 
         if (serviceConcreted != null) {
-            try {
-                startService(serviceConcreted);
-            } catch (ApplicationException | ResourceNotFoundException | ContainerStartException e) {
-                log.error(e.getMessage());
-                Context.showNotificationDialog("Error starting container", e.getMessage(), Alert.AlertType.ERROR);
-            }
+                new Thread(() -> {
+                    try {
+                        startService(serviceConcreted);
+                    } catch (ApplicationException | ResourceNotFoundException | ContainerStartException e) {
+                        log.error(e.getMessage());
+                        Platform.runLater(() -> {
+                            Context.showNotificationDialog("Error starting container", e.getMessage(), Alert.AlertType.ERROR);
+                        });
+                    }
+                }).start();
+
         }
     }
 
@@ -216,7 +239,7 @@ public class HostController {
     public void startService(DockerServiceConcreted serviceConcreted)
             throws ApplicationException, ContainerStartException, ResourceNotFoundException
     {
-        DockerServiceDescription service = null;
+        DockerServiceDescription service;
 
         try {
             service = Context.project.findService(serviceConcreted.getServiceId());
@@ -243,6 +266,8 @@ public class HostController {
 
         if (composition != null) {
             new Thread(() -> {
+                Context.HOST_STATUS_OBSERVABLE.notifyObservers("Starting composition " + composition.getName());
+
                 composition.getServices().forEach(serviceConcreted -> {
                     try {
                         startService(serviceConcreted);
@@ -251,6 +276,8 @@ public class HostController {
                         Context.showNotificationDialog("Error starting container", e.getMessage(), Alert.AlertType.ERROR);
                     }
                 });
+
+                Context.HOST_STATUS_OBSERVABLE.notifyObservers(String.format("Composition %s has been started", composition.getName()));
             }).start();
         }
     }
@@ -261,6 +288,8 @@ public class HostController {
 
         if (composition != null) {
             new Thread(() -> {
+                Context.HOST_STATUS_OBSERVABLE.notifyObservers("Stopping composition " + composition.getName());
+
                 composition.getServices().forEach(serviceConcreted -> {
                     DockerServiceDescription service;
 
@@ -274,11 +303,17 @@ public class HostController {
                     Optional<DockerContainer> container = dockerContainerService.getByName(service.getService().getName());
 
                     if (container.isPresent()) {
+                        Context.HOST_STATUS_OBSERVABLE.notifyObservers("Stopping service " + service.getService().getName());
                         stopContainer(container.get());
+                        Context.HOST_STATUS_OBSERVABLE.notifyObservers(String.format("Service %s has been stopped", service.getService().getName()));
                     } else {
-                        Context.showNotificationDialog("Container not found", String.format("Could not find container for service %s", service.getService().getName()), Alert.AlertType.WARNING);
+                        Platform.runLater(() -> {
+                            Context.showNotificationDialog("Container not found", String.format("Could not find container for service %s", service.getService().getName()), Alert.AlertType.WARNING);
+                        });
                     }
                 });
+
+                Context.HOST_STATUS_OBSERVABLE.notifyObservers(String.format("Composition %s has been stopped", composition.getName()));
             }).start();
         }
     }

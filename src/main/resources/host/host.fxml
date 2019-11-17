@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
@@ -23,6 +24,7 @@
     <RowConstraints maxHeight="319.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
     <RowConstraints maxHeight="361.0" minHeight="10.0" prefHeight="297.0" vgrow="SOMETIMES" />
     <RowConstraints maxHeight="344.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="30.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
       <Label fx:id="lblTitle" alignment="CENTER" text="Host Overview" GridPane.columnSpan="3" GridPane.halignment="CENTER">
@@ -68,6 +70,14 @@
          </children>
       </HBox>
       <Button mnemonicParsing="false" onAction="#startService" style="-fx-background-color: #72b872;" text="Start" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-border-width: 1; -fx-border-color: #a1a1a1;" GridPane.columnSpan="3" GridPane.rowIndex="4">
+         <GridPane.margin>
+            <Insets left="-5.0" right="-5.0" />
+         </GridPane.margin>
+         <children>
+            <Label fx:id="lblStatus" layoutX="57.0" layoutY="4.0" prefHeight="16.0" prefWidth="842.0" text="waiting for user interaction" />
+            <Label layoutX="6.0" layoutY="4.0" text="Status: " />
+         </children></Pane>
    </children>
    <padding>
       <Insets left="5.0" right="5.0" />
