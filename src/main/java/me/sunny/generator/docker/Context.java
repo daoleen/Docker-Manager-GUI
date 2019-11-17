@@ -51,6 +51,7 @@ public class Context {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setContentText(description);
+        alert.setResizable(true);
         alert.showAndWait();
     }
 }
