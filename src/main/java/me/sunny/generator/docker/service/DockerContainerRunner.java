@@ -46,6 +46,7 @@ public class DockerContainerRunner {
         }
 
         String containerId;
+        Context.HOST_STATUS_OBSERVABLE.notifyObservers("Starting service " + dockerService.getName());
         Optional<DockerContainer> container = dockerContainerService.getByName(dockerService.getName());
 
         if (container.isPresent()) {
@@ -56,6 +57,7 @@ public class DockerContainerRunner {
 
         dockerContainerService.start(containerId);
         checkDependHealthCheck(containerId, dockerService, dependOfMe);
+        Context.HOST_STATUS_OBSERVABLE.notifyObservers(String.format("Service %s started", dockerService.getName()));
     }
 
 
@@ -64,13 +66,13 @@ public class DockerContainerRunner {
     {
         if (dependOfMe == null) {
             if (dockerService.getHealthcheck() == null) {
-                checkHealthJustStarted(containerId);
+                checkHealthJustStarted(containerId, dockerService.getName());
             } else {
                 checkServiceHealthy(containerId, dockerService);
             }
         } else {
             if (DockerDependCondition.SERVICE_STARTED.equals(dependOfMe.getCondition())) {
-                checkHealthJustStarted(containerId);
+                checkHealthJustStarted(containerId, dockerService.getName());
             } else if (DockerDependCondition.SERVICE_HEALTHY.equals(dependOfMe.getCondition())) {
                 checkServiceHealthy(containerId, dockerService);
             }
@@ -82,10 +84,13 @@ public class DockerContainerRunner {
      * Waiting while container became to started status
      * If it won't in one minute the exception will be raised
      * @param containerId container to check
+     * @param name container name
      * @throws ContainerStartException when start time limits exceeded
      */
-    private void checkHealthJustStarted(String containerId) throws ContainerStartException, ResourceNotFoundException {
+    private void checkHealthJustStarted(String containerId, String name) throws ContainerStartException, ResourceNotFoundException {
         for (int i = 0; i < 60; i++) {
+            Context.HOST_STATUS_OBSERVABLE.notifyObservers(String.format("Waiting while service `%s` became to STARTED status. Attempt: %d", name, i + 1));
+
             if (dockerContainerService.isStarted(containerId)) {
                 return;
             }
@@ -123,6 +128,7 @@ public class DockerContainerRunner {
         }
 
         for (int i = 0; i < healthcheck.getRetriesCount() + 1; i++) {
+            Context.HOST_STATUS_OBSERVABLE.notifyObservers(String.format("Waiting while service `%s` became to HEALTHY status. Attempt: %d", dockerService.getName(), i + 1));
             status = dockerContainerService.getStatus(containerId);
 
             if (DockerContainerStatus.HEALTHY.equals(status)) {

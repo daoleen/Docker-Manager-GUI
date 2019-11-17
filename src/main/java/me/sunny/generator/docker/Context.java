@@ -3,6 +3,7 @@ package me.sunny.generator.docker;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Observable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.control.Alert;
@@ -12,6 +13,7 @@ import me.sunny.generator.docker.exception.ApplicationException;
 
 public class Context {
     private final static ObjectMapper objectMapper = new ObjectMapper();
+    public final static HostStatusObservable HOST_STATUS_OBSERVABLE = new HostStatusObservable();
     public static Project project;
 
 
@@ -53,5 +55,14 @@ public class Context {
         alert.setContentText(description);
         alert.setResizable(true);
         alert.showAndWait();
+    }
+
+
+    public static class HostStatusObservable extends Observable {
+        @Override
+        public void notifyObservers(Object arg) {
+            setChanged();
+            super.notifyObservers(arg);
+        }
     }
 }
