@@ -55,19 +55,19 @@
       <Button alignment="CENTER" mnemonicParsing="false" onAction="#stopContainer" style="-fx-background-color: #ff6f60;" text="Stop" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
          <children>
-            <Button mnemonicParsing="false" style="-fx-background-color: #72b872;" text="Start" textFill="WHITE">
+            <Button mnemonicParsing="false" onAction="#startComposition" style="-fx-background-color: #72b872;" text="Start" textFill="WHITE">
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" style="-fx-background-color: #ff6f60;" text="Stop">
+            <Button mnemonicParsing="false" onAction="#stopComposition" style="-fx-background-color: #ff6f60;" text="Stop">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
             </Button>
          </children>
       </HBox>
-      <Button mnemonicParsing="false" style="-fx-background-color: #72b872;" text="Start" onAction="#startService" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+      <Button mnemonicParsing="false" onAction="#startService" style="-fx-background-color: #72b872;" text="Start" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
    </children>
    <padding>
       <Insets left="5.0" right="5.0" />

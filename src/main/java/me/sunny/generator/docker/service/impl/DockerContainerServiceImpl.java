@@ -8,6 +8,7 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.ListContainersCmd;
+import com.github.dockerjava.api.exception.NotFoundException;
 import com.github.dockerjava.api.model.*;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
@@ -132,15 +133,27 @@ public class DockerContainerServiceImpl implements DockerContainerService {
 
     @Override
     public void stop(String id) {
-        dockerClient.stopContainerCmd(id).exec();
-        log.info("Container {} has been stopped", id);
+        try {
+            if (isStarted(id)) {
+                dockerClient.stopContainerCmd(id).exec();
+                log.info("Container {} has been stopped", id);
+            }
+        } catch (ResourceNotFoundException e) {
+            log.warn(e.getMessage());
+        }
     }
 
 
     @Override
     public void remove(String id) {
-        dockerClient.removeContainerCmd(id).exec();
-        log.info("Container {} has been removed", id);
+        get(id).ifPresent(container -> {
+            try {
+                dockerClient.removeContainerCmd(container.getId()).exec();
+                log.info("Container {} has been removed", id);
+            } catch (NotFoundException ex) {
+                log.warn(ex.getMessage());
+            }
+        });
     }
 
 
@@ -193,7 +206,14 @@ public class DockerContainerServiceImpl implements DockerContainerService {
     public boolean isStarted(String id) throws ResourceNotFoundException {
         DockerContainerStatus status = getStatus(id);
         log.debug("Container {} Status: {}", id, status);
-        return DockerContainerStatus.RUNNING.equals(status);
+
+        switch (status) {
+            case RUNNING:
+            case HEALTHY:
+                return true;
+        }
+
+        return false;
     }
 
 

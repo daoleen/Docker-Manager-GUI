@@ -1,10 +1,7 @@
 package me.sunny.generator.docker.controller;
 
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.github.dockerjava.api.DockerClient;
@@ -29,6 +26,7 @@ import me.sunny.generator.docker.service.DockerContainerRunner;
 import me.sunny.generator.docker.service.DockerContainerService;
 import me.sunny.generator.docker.util.ServiceFactory;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 @Slf4j
@@ -43,6 +41,9 @@ public class HostController {
 
     @FXML
     private ListView<DockerContainer> listRunningContainers;
+
+    @FXML
+    private ListView<Composition> listAvailableCompositions;
 
     @FXML
     private TableView<DockerServiceConcreted> tblSelectedServices;
@@ -78,6 +79,7 @@ public class HostController {
     public void init(Host host) {
         this.host = host;
         lblTitle.setText(String.format("Host %s overview", host.getAddress()));
+        listAvailableCompositions.setItems(FXCollections.observableArrayList(Context.project.getCompositions()));
 
         DefaultDockerClientConfig clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder()
                 .withDockerHost(this.host.getAddress())
@@ -182,43 +184,98 @@ public class HostController {
     }
 
 
-public void stopContainer(ActionEvent actionEvent) {
+    public void stopContainer(ActionEvent actionEvent) {
         DockerContainer container = listRunningContainers.getSelectionModel().getSelectedItem();
 
         if (container != null) {
-            dockerContainerService.stop(container.getId());
-            dockerContainerService.remove(container.getId());
+            stopContainer(container);
         }
+    }
+
+
+    private void stopContainer(DockerContainer container) {
+        dockerContainerService.stop(container.getId());
+        dockerContainerService.remove(container.getId());
     }
 
 
     public void startService(ActionEvent actionEvent) {
-        try {
-            startService();
-        } catch (ApplicationException | ResourceNotFoundException | ContainerStartException e) {
-            log.error(e.getMessage());
-            Context.showNotificationDialog("Error starting container", e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-
-    public void startService() throws ApplicationException, ContainerStartException, ResourceNotFoundException {
         DockerServiceConcreted serviceConcreted = tblSelectedServices.getSelectionModel().getSelectedItem();
 
         if (serviceConcreted != null) {
-            DockerServiceDescription service = null;
             try {
-                service = Context.project.findService(serviceConcreted.getServiceId());
-            } catch (ResourceNotFoundException e) {
-                throw new ApplicationException(String.format("Could not find service %s", serviceConcreted.getServiceId()));
+                startService(serviceConcreted);
+            } catch (ApplicationException | ResourceNotFoundException | ContainerStartException e) {
+                log.error(e.getMessage());
+                Context.showNotificationDialog("Error starting container", e.getMessage(), Alert.AlertType.ERROR);
             }
-
-            if (CollectionUtils.isEmpty(service.getVersions())) {
-                throw new ApplicationException(String.format("Could not start service %s because it has no any version", service.getService().getName()));
-            }
-
-            dockerContainerRunner.startService(service.getService(), service.getVersions().get(service.getVersions().size() - 1), null);
         }
     }
 
+
+    public void startService(DockerServiceConcreted serviceConcreted)
+            throws ApplicationException, ContainerStartException, ResourceNotFoundException
+    {
+        DockerServiceDescription service = null;
+
+        try {
+            service = Context.project.findService(serviceConcreted.getServiceId());
+        } catch (ResourceNotFoundException e) {
+            throw new ApplicationException(String.format("Could not find service %s", serviceConcreted.getServiceId()));
+        }
+
+        if (CollectionUtils.isEmpty(service.getVersions())) {
+            throw new ApplicationException(String.format("Could not start service %s because it has no any version",
+                    service.getService().getName()));
+        }
+
+        if (StringUtils.isBlank(serviceConcreted.getVersion())) {
+            throw new ApplicationException(String.format("Could not start service %s. Service version is not selected",
+                    serviceConcreted.getVersion()));
+        }
+
+        dockerContainerRunner.startService(service.getService(), serviceConcreted.getVersion(), null);
+    }
+
+
+    public void startComposition(ActionEvent actionEvent) {
+        Composition composition = listAvailableCompositions.getSelectionModel().getSelectedItem();
+
+        if (composition != null) {
+            composition.getServices().forEach(serviceConcreted -> {
+                try {
+                    startService(serviceConcreted);
+                } catch (ApplicationException | ResourceNotFoundException | ContainerStartException e) {
+                    log.error(e.getMessage());
+                    Context.showNotificationDialog("Error starting container", e.getMessage(), Alert.AlertType.ERROR);
+                }
+            });
+        }
+    }
+
+
+    public void stopComposition(ActionEvent actionEvent) {
+        Composition composition = listAvailableCompositions.getSelectionModel().getSelectedItem();
+
+        if (composition != null) {
+            composition.getServices().forEach(serviceConcreted -> {
+                DockerServiceDescription service;
+
+                try {
+                    service = Context.project.findService(serviceConcreted.getServiceId());
+                } catch (ResourceNotFoundException e) {
+                    Context.showNotificationDialog("Service not found", String.format("Could not find service %s", serviceConcreted.getServiceId()), Alert.AlertType.WARNING);
+                    return;
+                }
+
+                Optional<DockerContainer> container = dockerContainerService.getByName(service.getService().getName());
+
+                if (container.isPresent()) {
+                    stopContainer(container.get());
+                } else {
+                    Context.showNotificationDialog("Container not found", String.format("Could not find container for service %s", service.getService().getName()), Alert.AlertType.WARNING);
+                }
+            });
+        }
+    }
 }
