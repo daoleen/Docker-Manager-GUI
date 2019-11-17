@@ -2,10 +2,12 @@ package me.sunny.generator.docker.domain;
 
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 
 @Getter
+@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 public class DockerContainer {
     private String id;
