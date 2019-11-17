@@ -242,14 +242,16 @@ public class HostController {
         Composition composition = listAvailableCompositions.getSelectionModel().getSelectedItem();
 
         if (composition != null) {
-            composition.getServices().forEach(serviceConcreted -> {
-                try {
-                    startService(serviceConcreted);
-                } catch (ApplicationException | ResourceNotFoundException | ContainerStartException e) {
-                    log.error(e.getMessage());
-                    Context.showNotificationDialog("Error starting container", e.getMessage(), Alert.AlertType.ERROR);
-                }
-            });
+            new Thread(() -> {
+                composition.getServices().forEach(serviceConcreted -> {
+                    try {
+                        startService(serviceConcreted);
+                    } catch (ApplicationException | ResourceNotFoundException | ContainerStartException e) {
+                        log.error(e.getMessage());
+                        Context.showNotificationDialog("Error starting container", e.getMessage(), Alert.AlertType.ERROR);
+                    }
+                });
+            }).start();
         }
     }
 
@@ -258,24 +260,26 @@ public class HostController {
         Composition composition = listAvailableCompositions.getSelectionModel().getSelectedItem();
 
         if (composition != null) {
-            composition.getServices().forEach(serviceConcreted -> {
-                DockerServiceDescription service;
+            new Thread(() -> {
+                composition.getServices().forEach(serviceConcreted -> {
+                    DockerServiceDescription service;
 
-                try {
-                    service = Context.project.findService(serviceConcreted.getServiceId());
-                } catch (ResourceNotFoundException e) {
-                    Context.showNotificationDialog("Service not found", String.format("Could not find service %s", serviceConcreted.getServiceId()), Alert.AlertType.WARNING);
-                    return;
-                }
+                    try {
+                        service = Context.project.findService(serviceConcreted.getServiceId());
+                    } catch (ResourceNotFoundException e) {
+                        Context.showNotificationDialog("Service not found", String.format("Could not find service %s", serviceConcreted.getServiceId()), Alert.AlertType.WARNING);
+                        return;
+                    }
 
-                Optional<DockerContainer> container = dockerContainerService.getByName(service.getService().getName());
+                    Optional<DockerContainer> container = dockerContainerService.getByName(service.getService().getName());
 
-                if (container.isPresent()) {
-                    stopContainer(container.get());
-                } else {
-                    Context.showNotificationDialog("Container not found", String.format("Could not find container for service %s", service.getService().getName()), Alert.AlertType.WARNING);
-                }
-            });
+                    if (container.isPresent()) {
+                        stopContainer(container.get());
+                    } else {
+                        Context.showNotificationDialog("Container not found", String.format("Could not find container for service %s", service.getService().getName()), Alert.AlertType.WARNING);
+                    }
+                });
+            }).start();
         }
     }
 }
