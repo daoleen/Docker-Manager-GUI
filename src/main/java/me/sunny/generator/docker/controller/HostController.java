@@ -318,7 +318,10 @@ public class HostController {
                         startService(serviceConcreted);
                     } catch (ApplicationException | ResourceNotFoundException | ContainerStartException e) {
                         log.error(e.getMessage());
-                        Context.showNotificationDialog("Error starting container", e.getMessage(), Alert.AlertType.ERROR);
+                        Platform.runLater(() -> {
+                            Context.showNotificationDialog("Error starting container", e.getMessage(), Alert.AlertType.ERROR);
+                        });
+                        Context.HOST_STATUS_OBSERVABLE.notifyObservers("Error starting container" + e.getMessage());
                     }
                 });
 

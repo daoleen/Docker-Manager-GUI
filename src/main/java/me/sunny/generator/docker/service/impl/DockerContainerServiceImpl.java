@@ -226,9 +226,17 @@ public class DockerContainerServiceImpl implements DockerContainerService {
             case "created":
                 return DockerContainerStatus.CREATED;
             case "running":
-                return StringUtils.isNotBlank(dockerContainer.getStatus()) && dockerContainer.getStatus().contains("(healthy")
-                        ? DockerContainerStatus.HEALTHY
-                        : DockerContainerStatus.RUNNING;
+                if (StringUtils.isNotBlank(dockerContainer.getStatus())) {
+                    if (dockerContainer.getStatus().contains("(healthy")) {
+                        return DockerContainerStatus.HEALTHY;
+                    }
+
+                    if (dockerContainer.getStatus().contains("(unhealthy")) {
+                        return DockerContainerStatus.UNHEALTHY;
+                    }
+                }
+
+                return  DockerContainerStatus.RUNNING;
             case "exited":
                 return DockerContainerStatus.EXITED;
         }
