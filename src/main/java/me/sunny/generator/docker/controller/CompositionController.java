@@ -19,6 +19,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Callback;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
@@ -240,12 +241,17 @@ public class CompositionController {
                 Stage dialogStage = new Stage();
                 dialogStage.initModality(Modality.APPLICATION_MODAL);
                 dialogStage.setTitle("Enter new composition name");
+                Window sourceWindow = listAvailableServices.getScene().getWindow();
+                dialogStage.setX(sourceWindow.getX());
+                dialogStage.setY(sourceWindow.getY());
+
                 try {
                     dialogStage.setScene(new Scene(fxmlLoader.load()));
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);
                     Context.showNotificationDialog("Error applying composition", e.getMessage(), Alert.AlertType.ERROR);
                 }
+
                 DialogController dialogController = fxmlLoader.<DialogController>getController();
                 dialogController.init("Please enter new composition name here", "");
                 dialogStage.showAndWait();

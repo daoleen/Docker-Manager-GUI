@@ -18,6 +18,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
@@ -145,6 +146,10 @@ public class ProjectOpenController {
         Stage windowStage = new Stage();
         windowStage.initModality(Modality.APPLICATION_MODAL);
         windowStage.setTitle("Docker Compose Generator: " + Context.project.getName());
+        Window sourceWindow = listRecentProjects.getScene().getWindow();
+        windowStage.setX(sourceWindow.getX());
+        windowStage.setY(sourceWindow.getY());
+
         try {
             windowStage.setScene(new Scene(fxmlLoader.load()));
         } catch (IOException e) {
@@ -173,6 +178,10 @@ public class ProjectOpenController {
         Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.APPLICATION_MODAL);
         dialogStage.setTitle("Enter new project name");
+        Window sourceWindow = listRecentProjects.getScene().getWindow();
+        dialogStage.setX(sourceWindow.getX());
+        dialogStage.setY(sourceWindow.getY());
+
         try {
             dialogStage.setScene(new Scene(fxmlLoader.load()));
         } catch (IOException e) {

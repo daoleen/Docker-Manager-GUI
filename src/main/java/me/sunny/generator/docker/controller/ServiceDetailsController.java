@@ -12,6 +12,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.domain.*;
@@ -125,6 +126,9 @@ public class ServiceDetailsController {
             serviceUpdateStage.setScene(new Scene(fxmlLoader.load()));
             ServiceUpdateController serviceUpdateController = fxmlLoader.getController();
             serviceUpdateController.init(dockerServiceDescription.getService().getName());
+            Window sourceWindow = lblName.getScene().getWindow();
+            serviceUpdateStage.setX(sourceWindow.getX());
+            serviceUpdateStage.setY(sourceWindow.getY());
             serviceUpdateStage.show();
             close();
         } catch (IOException ex) {
@@ -143,6 +147,9 @@ public class ServiceDetailsController {
             versionCreateStage.setScene(new Scene(fxmlLoader.load()));
             VersionCreateController versionCreateController = fxmlLoader.<VersionCreateController>getController();
             versionCreateController.init(dockerServiceDescription.getService().getName(), this);
+            Window sourceWindow = lblName.getScene().getWindow();
+            versionCreateStage.setX(sourceWindow.getX());
+            versionCreateStage.setY(sourceWindow.getY());
             versionCreateStage.show();
         } catch (IOException ex) {
             log.error("Could not open window for details of service: {}", ex.getMessage());

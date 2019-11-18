@@ -18,6 +18,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.StringConverter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -433,6 +434,9 @@ public class ServiceUpdateController {
             serviceDetailsStage.setScene(new Scene(fxmlLoader.load()));
             ServiceDetailsController serviceDetailsController = fxmlLoader.<ServiceDetailsController>getController();
             serviceDetailsController.init(serviceName);
+            Window sourceWindow = txtName.getScene().getWindow();
+            serviceDetailsStage.setX(sourceWindow.getX());
+            serviceDetailsStage.setY(sourceWindow.getY());
             serviceDetailsStage.show();
 
             ((Stage) txtName.getScene().getWindow()).close();
