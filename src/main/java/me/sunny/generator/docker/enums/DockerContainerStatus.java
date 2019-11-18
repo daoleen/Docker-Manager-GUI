@@ -6,5 +6,6 @@ public enum DockerContainerStatus {
     EXITED,
     RUNNING,
     HEALTHY,
+    UNHEALTHY,
     UNKNOWN;
 }
