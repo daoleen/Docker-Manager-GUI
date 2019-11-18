@@ -238,4 +238,15 @@ public class MainController {
 
         stage.showAndWait();
     }
+
+
+    public void deleteSelectedHost(ActionEvent actionEvent) {
+        Host host = listHosts.getSelectionModel().getSelectedItem();
+
+        if (host != null) {
+            Context.project.getHosts().remove(host);
+            log.info("Host {} has been deleted");
+            initData();
+        }
+    }
 }
