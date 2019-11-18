@@ -51,7 +51,7 @@ jfx {
     verbose = true
     mainClass = "me.sunny.generator.docker.Main"
     jfxAppOutputDir = "build/jfx/app"
-    jfxMainAppJarName = "docker-compose-generator.jar"
+    jfxMainAppJarName = "docker-manager-gui.jar"
     deployDir = "src/main/deploy"
     useEnvironmentRelativeExecutables = true
     libFolderName = "lib"
@@ -77,14 +77,14 @@ jfx {
     jvmArgs = null // List<String>
     userJvmArgs = null // Map<String, String>
     launcherArguments = null // List<String>
-    nativeReleaseVersion = "1.0"
+    nativeReleaseVersion = version
     needShortcut = false
     needMenu = false
     bundleArguments = [
             // dont bundle JRE (not recommended, but increases build-size/-speed)
             runtime: null
     ]
-    appName = "DockerComposeGenerator" // this is used for files below "src/main/deploy", e.g. "src/main/deploy/package/windows/project.ico"
+    appName = "DockerManagerGUI" // this is used for files below "src/main/deploy", e.g. "src/main/deploy/package/windows/project.ico"
     additionalBundlerResources = null // path to some additional resources for the bundlers when creating application-bundle
     additionalAppResources = null // path to some additional resources when creating application-bundle
     secondaryLaunchers = [[appName:"somethingDifferent"], [appName:"somethingDifferent2"]]
@@ -107,7 +107,7 @@ jfx {
     skipMacBundlerWorkaround = false
 
     // gradle jfxRun
-    runJavaParameter = null // String
+    runJavaParameter = null // Stringclean
     runAppParameter = null // String
 
     // per default the outcome of the gradle "jarTask" will be used, set this to specify otherwise (like proguard-output)
