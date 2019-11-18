@@ -156,6 +156,7 @@ public class HostController {
     private void initRunningContainers() {
         List<DockerContainer> runningContainers = dockerContainerService.getContainers(false);
         listRunningContainers.setItems(FXCollections.observableList(runningContainers));
+        listRunningContainers.refresh();
     }
 
 

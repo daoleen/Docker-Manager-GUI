@@ -10,6 +10,7 @@ import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.ListContainersCmd;
 import com.github.dockerjava.api.exception.NotFoundException;
 import com.github.dockerjava.api.model.*;
+import com.github.dockerjava.core.command.PullImageResultCallback;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.domain.DockerContainer;
@@ -70,7 +71,8 @@ public class DockerContainerServiceImpl implements DockerContainerService {
             hostConfig.withLinks(links);
         }
 
-        CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(String.format("%s:%s", dockerService.getImage(), version))
+        final String imageVersion = String.format("%s:%s", dockerService.getImage(), version);
+        CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(imageVersion)
                 .withName(dockerService.getName())
                 .withHostName(dockerService.getName())
                 .withHostConfig(hostConfig);
@@ -93,6 +95,9 @@ public class DockerContainerServiceImpl implements DockerContainerService {
             createContainerCmd.withHealthcheck(healthCheck);
         }
 
+        if (!hasImageOnHost(imageVersion)) {
+            pullImage(imageVersion);
+        }
 
         CreateContainerResponse containerResponse;
         try {
@@ -242,6 +247,43 @@ public class DockerContainerServiceImpl implements DockerContainerService {
         }
 
         return DockerContainerStatus.UNKNOWN;
+    }
+
+
+    @Override
+    public boolean hasImageOnHost(String name) {
+        return getImage(name).isPresent();
+    }
+
+
+    @Override
+    public Optional<Image> getImage(String name) {
+        List<Image> images = dockerClient.listImagesCmd()
+                .withImageNameFilter(name)
+                .withShowAll(true)
+                .exec();
+
+        if (CollectionUtils.isEmpty(images)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(images.get(0));
+    }
+
+
+    @Override
+    public void pullImage(String name) throws ApplicationException {
+        Context.HOST_STATUS_OBSERVABLE.notifyObservers("Pulling image " + name);
+        PullImageResultCallback resultCallback = dockerClient.pullImageCmd(name)
+                .exec(new PullImageResultCallback());
+
+        try {
+            resultCallback.awaitCompletion();
+        } catch (InterruptedException e) {
+            log.warn(e.getMessage(), e);
+            Context.HOST_STATUS_OBSERVABLE.notifyObservers("Error pulling image " + name);
+            throw new ApplicationException("Image pulling interrupted");
+        }
     }
 
 

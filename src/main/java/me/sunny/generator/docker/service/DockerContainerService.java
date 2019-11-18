@@ -4,6 +4,7 @@ package me.sunny.generator.docker.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.github.dockerjava.api.model.Image;
 import me.sunny.generator.docker.domain.DockerContainer;
 import me.sunny.generator.docker.domain.DockerService;
 import me.sunny.generator.docker.enums.DockerContainerStatus;
@@ -22,4 +23,7 @@ public interface DockerContainerService {
     Optional<DockerContainer> getByName(String name);
     boolean isStarted(String id) throws ResourceNotFoundException;
     DockerContainerStatus getStatus(String id) throws ResourceNotFoundException;
+    boolean hasImageOnHost(String name);
+    Optional<Image> getImage(String name);
+    void pullImage(String name) throws ApplicationException;
 }
