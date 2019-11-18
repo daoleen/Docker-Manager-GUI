@@ -183,6 +183,10 @@ public class MainController {
 
         HostController hostController = fxmlLoader.<HostController>getController();
         hostController.init(host);
+        stage.setOnCloseRequest(event -> {
+            log.debug("Host management window closed");
+            hostController.quit();
+        });
         stage.show();
     }
 
