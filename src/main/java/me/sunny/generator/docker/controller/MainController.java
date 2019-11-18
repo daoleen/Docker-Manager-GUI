@@ -19,6 +19,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.Main;
@@ -83,6 +84,11 @@ public class MainController {
             serverCreateStage.initModality(Modality.WINDOW_MODAL);
             serverCreateStage.setTitle("Create a new service");
             serverCreateStage.setScene(new Scene(serviceCreateWnd));
+
+            Window sourceWindow = lblProjectName.getScene().getWindow();
+            serverCreateStage.setX(sourceWindow.getX());
+            serverCreateStage.setY(sourceWindow.getY());
+
             serverCreateStage.show();
         } catch (IOException ex) {
             log.error("Could not open window for creating a new service: {}", ex.getMessage());
@@ -138,6 +144,10 @@ public class MainController {
             serviceCompositionStage.setTitle("Services Composition");
             serviceCompositionStage.setScene(new Scene(fxmlLoader.load()));
 
+            Window sourceWindow = lblProjectName.getScene().getWindow();
+            serviceCompositionStage.setX(sourceWindow.getX());
+            serviceCompositionStage.setY(sourceWindow.getY());
+
             if (composition != null) {
                 CompositionController controller = fxmlLoader.<CompositionController>getController();
                 controller.selectComposition(composition);
@@ -158,6 +168,10 @@ public class MainController {
             serviceDetailsStage.initModality(Modality.WINDOW_MODAL);
             serviceDetailsStage.setTitle(serviceName);
             serviceDetailsStage.setScene(new Scene(fxmlLoader.load()));
+            Window sourceWindow = lblProjectName.getScene().getWindow();
+            serviceDetailsStage.setX(sourceWindow.getX());
+            serviceDetailsStage.setY(sourceWindow.getY());
+
             ServiceDetailsController serviceDetailsController = fxmlLoader.<ServiceDetailsController>getController();
             serviceDetailsController.init(serviceName);
             serviceDetailsStage.show();
@@ -173,6 +187,10 @@ public class MainController {
         Stage stage = new Stage();
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setTitle("Host management");
+        Window sourceWindow = lblProjectName.getScene().getWindow();
+        stage.setX(sourceWindow.getX());
+        stage.setY(sourceWindow.getY());
+
         try {
             stage.setScene(new Scene(fxmlLoader.load()));
         } catch (IOException e) {
@@ -228,6 +246,10 @@ public class MainController {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Specify a new docker host");
+        Window sourceWindow = lblProjectName.getScene().getWindow();
+        stage.setX(sourceWindow.getX());
+        stage.setY(sourceWindow.getY());
+
         try {
             stage.setScene(new Scene(fxmlLoader.load()));
         } catch (IOException e) {
