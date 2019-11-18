@@ -224,27 +224,18 @@ public class MainController {
 
 
     public void addNewHost(ActionEvent actionEvent) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("dialog.fxml"));
-        Stage dialogStage = new Stage();
-        dialogStage.initModality(Modality.APPLICATION_MODAL);
-        dialogStage.setTitle("Specify a new docker host");
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("host/create.fxml"));
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Specify a new docker host");
         try {
-            dialogStage.setScene(new Scene(fxmlLoader.load()));
+            stage.setScene(new Scene(fxmlLoader.load()));
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             Context.showNotificationDialog("Error creating a new host", e.getMessage(), Alert.AlertType.ERROR);
             return;
         }
 
-        DialogController dialogController = fxmlLoader.<DialogController>getController();
-        dialogController.init("Enter Docker Host (ex: tcp://localhost:2375)", "");
-        dialogStage.showAndWait();
-
-        if (dialogController.isCancelled()) {
-            log.debug("Skip creating a new docker host because it was cancelled by user");
-            return;
-        }
-
-        Context.project.getHosts().add(new Host(dialogController.getContent()));
+        stage.showAndWait();
     }
 }
