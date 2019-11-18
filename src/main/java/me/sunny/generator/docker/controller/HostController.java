@@ -98,7 +98,9 @@ public class HostController {
 
     private void initDocker() {
         DefaultDockerClientConfig clientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder()
-                .withDockerHost(this.host.getAddress())
+                .withDockerHost(host.getAddress())
+                .withDockerTlsVerify(host.isUseSSL())
+                .withDockerCertPath(host.getCertificatesPath())
                 .build();
 
         DockerClient dockerClient = DockerClientBuilder.getInstance(clientConfig).build();

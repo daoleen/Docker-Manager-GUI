@@ -11,6 +11,8 @@ import lombok.*;
 @EqualsAndHashCode
 public class Host {
     private String address;
+    private boolean useSSL;
+    private String certificatesPath;
 
 
     @Override
