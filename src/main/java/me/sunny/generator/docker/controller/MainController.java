@@ -103,32 +103,38 @@ public class MainController {
     }
 
 
-    public void about(ActionEvent actionEvent) {
+    public void aboutDockerd(ActionEvent actionEvent) {
+        openManualWindow(false);
+    }
+
+
+    public void aboutDockerdSecure(ActionEvent actionEvent) {
+        openManualWindow(true);
     }
 
 
     public void openServiceComposition(ActionEvent actionEvent) {
         openServiceCompositionWindow(null);
     }
-
-
     // show service details window on double-click
+
+
     public void onMouseClickedOnService(MouseEvent mouseEvent) {
         if (MouseButton.PRIMARY.equals(mouseEvent.getButton()) && 2 == mouseEvent.getClickCount()) {
             openDetailsWindow(listServices.getSelectionModel().getSelectedItem().getService().getName());
         }
     }
-
-
     // show composition window on double-click
+
+
     public void onMouseClickedOnComposition(MouseEvent mouseEvent) {
         if (MouseButton.PRIMARY.equals(mouseEvent.getButton()) && 2 == mouseEvent.getClickCount()) {
             openServiceCompositionWindow(listCompositions.getSelectionModel().getSelectedItem());
         }
     }
-
-
     // show host management window on double-click
+
+
     public void onMouseClickedOnHost(MouseEvent mouseEvent) {
         if (MouseButton.PRIMARY.equals(mouseEvent.getButton()) && 2 == mouseEvent.getClickCount()) {
             openHostWindow(listHosts.getSelectionModel().getSelectedItem());
@@ -206,6 +212,28 @@ public class MainController {
             hostController.quit();
         });
         stage.show();
+    }
+
+
+    private void openManualWindow(boolean secure) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("help/dockerd.fxml"));
+            Stage stage = new Stage();
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setTitle("Dockerd configuration help");
+            stage.setScene(new Scene(fxmlLoader.load()));
+            Window sourceWindow = lblProjectName.getScene().getWindow();
+            stage.setX(sourceWindow.getX());
+            stage.setY(sourceWindow.getY());
+
+            HelpController helpController = fxmlLoader.<HelpController>getController();
+            helpController.init(secure);
+
+            stage.show();
+        } catch (IOException ex) {
+            log.error("Could not help window: {}", ex.getMessage());
+            Context.showNotificationDialog("Error", "Could not open help window", Alert.AlertType.ERROR);
+        }
     }
 
 
