@@ -152,7 +152,11 @@ public class ProjectOpenController {
             Context.showNotificationDialog("Error opening main window", e.getMessage(), Alert.AlertType.ERROR);
         }
 
-        MainController controller = fxmlLoader.<MainController>getController();
+        final MainController controller = fxmlLoader.<MainController>getController();
+        windowStage.setOnCloseRequest(event -> {
+            log.debug("Main window closed");
+            controller.quit();
+        });
         windowStage.show();
 
         close();
