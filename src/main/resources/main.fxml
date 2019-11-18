@@ -17,7 +17,7 @@
    <children>
        <MenuBar VBox.vgrow="NEVER">
            <menus>
-               <Menu mnemonicParsing="false" text="File">
+               <Menu mnemonicParsing="false" text="Service">
                    <items>
                        <MenuItem fx:id="mnuServiceCreate" mnemonicParsing="false" onAction="#openServiceCreateWindow" text="Create a new service" />
                        <MenuItem fx:id="mnuServiceComposition" mnemonicParsing="false" onAction="#openServiceComposition" text="Composition" />
@@ -31,7 +31,8 @@
                </Menu>
                <Menu mnemonicParsing="false" text="Help">
                    <items>
-                       <MenuItem mnemonicParsing="false" onAction="#about" text="About MyHelloApp" />
+                       <MenuItem mnemonicParsing="false" onAction="#aboutDockerd" text="Configure Docker Daemon (Simple)" />
+                       <MenuItem mnemonicParsing="false" onAction="#aboutDockerdSecure" text="Configure Docker Daemon in Secure mode" />
                    </items>
                </Menu>
            </menus>
