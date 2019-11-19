@@ -22,7 +22,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Main.primaryStage = primaryStage;
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("project/open-project.fxml"));
-        primaryStage.setTitle("Docker-Compose Generator");
+        primaryStage.setTitle("Docker Manager GUI");
         primaryStage.setScene(new Scene(root));
         primaryStage.setOnCloseRequest(event -> exit());
         primaryStage.show();

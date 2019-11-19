@@ -4,6 +4,7 @@ package me.sunny.generator.docker.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -112,7 +113,7 @@ public class ProjectOpenController {
 
 
     private void saveProjectToRecent(String absolutePath) {
-        String recent = readRecent().replaceAll(absolutePath.concat("\n"), "");
+        String recent = readRecent().replaceAll(Pattern.quote(absolutePath.concat("\n")), "");
         recent = absolutePath.concat("\n").concat(recent);
         saveRecent(recent);
     }
