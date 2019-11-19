@@ -43,7 +43,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.2'
 }
 
-println 'JAVA_HOME=' + System.properties['java.home'] + '//lib'
+println 'JRE_HOME=' + System.properties['java.home']
 
 apply plugin: 'javafx-gradle-plugin'
 
@@ -81,8 +81,7 @@ jfx {
     needShortcut = false
     needMenu = false
     bundleArguments = [
-            // dont bundle JRE (not recommended, but increases build-size/-speed)
-            runtime: null
+            runtime: System.properties['java.home']
     ]
     appName = "DockerManagerGUI" // this is used for files below "src/main/deploy", e.g. "src/main/deploy/package/windows/project.ico"
     additionalBundlerResources = null // path to some additional resources for the bundlers when creating application-bundle
