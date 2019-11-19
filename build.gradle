@@ -81,7 +81,7 @@ jfx {
     needShortcut = false
     needMenu = false
     bundleArguments = [
-            runtime: System.properties['java.home']
+            runtime: null
     ]
     appName = "DockerManagerGUI" // this is used for files below "src/main/deploy", e.g. "src/main/deploy/package/windows/project.ico"
     additionalBundlerResources = null // path to some additional resources for the bundlers when creating application-bundle
