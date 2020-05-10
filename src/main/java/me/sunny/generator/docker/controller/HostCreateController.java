@@ -2,20 +2,26 @@ package me.sunny.generator.docker.controller;
 
 
 import java.io.File;
+import java.util.HashSet;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.domain.Host;
+import me.sunny.generator.docker.domain.HostVariable;
 import org.apache.commons.lang3.StringUtils;
 
 
 public class HostCreateController {
+    private final ObservableList<HostVariable> hostVariables = FXCollections.observableArrayList();
 
     @FXML
     private TextField txtHostAddress;
@@ -29,15 +35,52 @@ public class HostCreateController {
     @FXML
     private TextField txtCertificatesPath;
 
+    @FXML
+    private TableView<HostVariable> tblHostVariables;
+
+    @FXML
+    private TableColumn<HostVariable, String> tblHostVariablesColVar;
+
+    @FXML
+    private TableColumn<HostVariable, String> tblHostVariablesColVal;
+
 
     @FXML
     private void initialize() {
         setVisibilityCertificatesPath();
+        initHostVariablesTable();
+    }
+
+
+    private void initHostVariablesTable() {
+        tblHostVariablesColVar.setCellValueFactory(new PropertyValueFactory<>("variable"));
+        tblHostVariablesColVal.setCellValueFactory(new PropertyValueFactory<>("value"));
+
+        Platform.runLater(() -> tblHostVariables.setItems(hostVariables));
+
+        tblHostVariables.setEditable(true);
+        tblHostVariablesColVar.setEditable(true);
+        tblHostVariablesColVal.setEditable(true);
+
+        tblHostVariablesColVar.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        tblHostVariablesColVar.setOnEditCommit(event -> {
+            HostVariable hostVariable = event.getRowValue();
+            hostVariable.setVariable(event.getNewValue());
+        });
+
+        tblHostVariablesColVal.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        tblHostVariablesColVal.setOnEditCommit(event -> {
+            HostVariable hostVariable = event.getRowValue();
+            hostVariable.setValue(event.getNewValue());
+        });
     }
 
 
     public void save(ActionEvent actionEvent) {
-        Host host = new Host(txtHostAddress.getText(), chkSSL.isSelected(), txtCertificatesPath.getText());
+        HashSet<HostVariable> hostVariables = new HashSet<>(this.hostVariables);
+        Host host = new Host(txtHostAddress.getText(), chkSSL.isSelected(), txtCertificatesPath.getText(), hostVariables);
         Context.project.getHosts().add(host);
         close();
     }
@@ -78,6 +121,23 @@ public class HostCreateController {
         }
 
         setVisibilityCertificatesPath();
+    }
+
+
+    public void addVariable(ActionEvent actionEvent) {
+        Platform.runLater(() -> {
+            hostVariables.add(new HostVariable());
+        });
+    }
+
+
+    public void removeVariable(ActionEvent actionEvent) {
+        Platform.runLater(() -> {
+            HostVariable selectedItem = tblHostVariables.getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                Platform.runLater(() -> hostVariables.remove(selectedItem));
+            }
+        });
     }
 
 

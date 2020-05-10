@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.sunny.generator.docker.Context;
 import me.sunny.generator.docker.domain.DockerContainer;
 import me.sunny.generator.docker.domain.DockerService;
+import me.sunny.generator.docker.domain.Host;
 import me.sunny.generator.docker.enums.DockerContainerStatus;
 import me.sunny.generator.docker.enums.DockerRestartOption;
 import me.sunny.generator.docker.exception.ApplicationException;
@@ -29,10 +30,12 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class DockerContainerServiceImpl implements DockerContainerService {
     private final DockerClient dockerClient;
+    private final Host host;
 
 
-    public DockerContainerServiceImpl(DockerClient dockerClient) {
+    public DockerContainerServiceImpl(DockerClient dockerClient, Host host) {
         this.dockerClient = dockerClient;
+        this.host = host;
     }
 
 
@@ -55,8 +58,17 @@ public class DockerContainerServiceImpl implements DockerContainerService {
 
         if (CollectionUtils.isNotEmpty(dockerService.getVolumes())) {
             List<Bind> volumeBindings = dockerService.getVolumes().stream()
-                    .map(dockerVolumeMapping -> new Bind(dockerVolumeMapping.getHostVolumePath(),
-                            new Volume(dockerVolumeMapping.getContainerVolumePath())))
+                    .map(dockerVolumeMapping -> {
+                        final String[] containerVolumePath = {dockerVolumeMapping.getContainerVolumePath()};
+                        if (containerVolumePath[0].contains("#{")) {
+                            // value contains HostVariable
+                            host.getHostVariables().forEach(hostVariable -> {
+                                containerVolumePath[0] = containerVolumePath[0].replace(hostVariable.getVariable(), hostVariable.getValue());
+                            });
+                        }
+
+                        return new Bind(dockerVolumeMapping.getHostVolumePath(), new Volume(containerVolumePath[0]));
+                    })
                     .collect(Collectors.toList());
 
             hostConfig.withBinds(volumeBindings);
@@ -79,7 +91,17 @@ public class DockerContainerServiceImpl implements DockerContainerService {
 
         if (MapUtils.isNotEmpty(dockerService.getEnvironment())) {
             List<String> environments = dockerService.getEnvironment().entrySet().stream()
-                    .map(env -> String.format("%s=%s", env.getKey(), env.getValue()))
+                    .map(env -> {
+                        final String[] value = {env.getValue()};
+                        if (value[0].contains("#{")) {
+                            // value contains HostVariable
+                            host.getHostVariables().forEach(hostVariable -> {
+                                value[0] = value[0].replace(hostVariable.getVariable(), hostVariable.getValue());
+                            });
+                        }
+
+                        return String.format("%s=%s", env.getKey(), value[0]);
+                    })
                     .collect(Collectors.toList());
 
             createContainerCmd.withEnv(environments);
