@@ -104,7 +104,7 @@ public class HostController {
                 .build();
 
         DockerClient dockerClient = DockerClientBuilder.getInstance(clientConfig).build();
-        dockerContainerService = ServiceFactory.getDockerContainerService(dockerClient);
+        dockerContainerService = ServiceFactory.getDockerContainerService(dockerClient, host);
         dockerContainerRunner = ServiceFactory.getDockerContainerRunner(dockerContainerService);
 
         pingDocker(dockerClient);
