@@ -237,8 +237,26 @@ public class HostController {
 
     private void initAvailableServices() {
         List<DockerServiceConcreted> availableServicesConcreted = Context.project.getAvailableServices().stream()
-                .map(serviceDescription -> new DockerServiceConcreted(serviceDescription.getService().getId(),
-                        serviceDescription.getVersions().get(serviceDescription.getVersions().size() - 1)))
+                .map(serviceDescription -> {
+                    String version = "";
+
+                    // If user has selected a not latest version then show the selected version
+                    if (!tblSelectedServices.getItems().isEmpty()) {
+                        for (DockerServiceConcreted service : tblSelectedServices.getItems()) {
+                            if (service.getServiceId().equals(serviceDescription.getService().getId())) {
+                                version = service.getVersion();
+                                break;
+                            }
+                        }
+                    }
+
+                    // User doesn't select a version so put the latest one
+                    if (StringUtils.isBlank(version)) {
+                        version = serviceDescription.getVersions().get(serviceDescription.getVersions().size() - 1);
+                    }
+
+                    return new DockerServiceConcreted(serviceDescription.getService().getId(), version);
+                })
                 .collect(Collectors.toList());
 
         ObservableList<DockerServiceConcreted> observableList = FXCollections.observableList(availableServicesConcreted);
