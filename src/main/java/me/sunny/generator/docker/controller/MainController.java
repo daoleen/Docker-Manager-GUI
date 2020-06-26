@@ -290,6 +290,33 @@ public class MainController {
     }
 
 
+    public void updateSelectedHost(ActionEvent actionEvent) {
+        Host host = listHosts.getSelectionModel().getSelectedItem();
+
+        if (host != null) {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("host/update.fxml"));
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Edit host " + host.getAddress());
+            Window sourceWindow = lblProjectName.getScene().getWindow();
+            stage.setX(sourceWindow.getX());
+            stage.setY(sourceWindow.getY());
+
+            try {
+                stage.setScene(new Scene(fxmlLoader.load()));
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+                Context.showNotificationDialog("Error creating a new host", e.getMessage(), Alert.AlertType.ERROR);
+                return;
+            }
+
+            HostUpdateController controller = fxmlLoader.getController();
+            controller.init(host);
+            stage.showAndWait();
+        }
+    }
+
+
     public void deleteSelectedHost(ActionEvent actionEvent) {
         Host host = listHosts.getSelectionModel().getSelectedItem();
 
