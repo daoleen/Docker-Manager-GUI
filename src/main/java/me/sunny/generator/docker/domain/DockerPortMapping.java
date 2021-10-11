@@ -18,4 +18,9 @@ public class DockerPortMapping {
     public String toString() {
         return String.format("%d:%d", hostPort, containerPort);
     }
+
+
+    public DockerPortMapping copy() {
+        return new DockerPortMapping(hostPort, containerPort);
+    }
 }

@@ -23,4 +23,9 @@ public class DockerHealthchek {
         return String.format("test: %s\ninterval: %ds\ntimeout: %ds\nretries: %d",
                 test, intervalSeconds, timeoutSeconds, retriesCount);
     }
+
+
+    public DockerHealthchek copy() {
+        return new DockerHealthchek(test, intervalSeconds, timeoutSeconds, retriesCount);
+    }
 }

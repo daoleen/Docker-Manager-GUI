@@ -1,13 +1,16 @@
 package me.sunny.generator.docker.controller;
 
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.DockerCmdExecFactory;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
+import com.github.dockerjava.netty.NettyDockerCmdExecFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -34,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class HostController {
     private Host host;
+    private DockerClient dockerClient;
     private DockerContainerService dockerContainerService;
     private DockerContainerRunner dockerContainerRunner;
     private volatile boolean connectionInitialized;
@@ -66,6 +70,7 @@ public class HostController {
             try {
                 Thread.sleep(2000L);
             } catch (InterruptedException e) {
+                break;
             }
 
             if (connectionInitialized) {
@@ -76,11 +81,18 @@ public class HostController {
                 });
             }
         }
-    });
+    }, "reloader_" + Math.random());
 
 
     public void quit() {
         reloader.interrupt();
+        if (dockerClient != null) {
+            try {
+                dockerClient.close();
+            } catch (IOException e) {
+                log.warn(e.getMessage());
+            }
+        }
     }
 
 
@@ -103,7 +115,10 @@ public class HostController {
                 .withDockerCertPath(host.getCertificatesPath())
                 .build();
 
-        DockerClient dockerClient = DockerClientBuilder.getInstance(clientConfig).build();
+        DockerCmdExecFactory factory = new NettyDockerCmdExecFactory().withConnectTimeout(100000);
+        dockerClient = DockerClientBuilder.getInstance(clientConfig)
+                .withDockerCmdExecFactory(factory)
+                .build();
         dockerContainerService = ServiceFactory.getDockerContainerService(dockerClient, host);
         dockerContainerRunner = ServiceFactory.getDockerContainerRunner(dockerContainerService);
 
@@ -289,7 +304,7 @@ public class HostController {
         if (serviceConcreted != null) {
                 new Thread(() -> {
                     try {
-                        startService(serviceConcreted);
+                        startService(serviceConcreted, false);
                     } catch (ApplicationException | ResourceNotFoundException | ContainerStartException e) {
                         log.error(e.getMessage());
                         Platform.runLater(() -> {
@@ -297,12 +312,38 @@ public class HostController {
                         });
                     }
                 }).start();
-
         }
     }
 
 
-    public void startService(DockerServiceConcreted serviceConcreted)
+    public void startServiceIndependently(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Are you sure?");
+        alert.setHeaderText("Are you sure you want to start that service independently?");
+        alert.setContentText("If you start the service independently all the services\non which that service depends won't be started!");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            DockerServiceConcreted serviceConcreted = tblSelectedServices.getSelectionModel().getSelectedItem();
+
+            if (serviceConcreted != null) {
+                new Thread(() -> {
+                    try {
+                        startService(serviceConcreted, true);
+                    } catch (ApplicationException | ResourceNotFoundException | ContainerStartException e) {
+                        log.error(e.getMessage());
+                        Platform.runLater(() -> {
+                            Context.showNotificationDialog("Error starting container", e.getMessage(),
+                                    Alert.AlertType.ERROR);
+                        });
+                    }
+                }).start();
+            }
+        }
+    }
+
+
+    public void startService(DockerServiceConcreted serviceConcreted, boolean startIndependently)
             throws ApplicationException, ContainerStartException, ResourceNotFoundException
     {
         DockerServiceDescription service;
@@ -323,7 +364,7 @@ public class HostController {
                     serviceConcreted.getVersion()));
         }
 
-        dockerContainerRunner.startService(service.getService(), serviceConcreted.getVersion(), null);
+        dockerContainerRunner.startService(service.getService(), serviceConcreted.getVersion(), null, startIndependently);
     }
 
 
@@ -336,7 +377,7 @@ public class HostController {
 
                 composition.getServices().forEach(serviceConcreted -> {
                     try {
-                        startService(serviceConcreted);
+                        startService(serviceConcreted, false);
                     } catch (ApplicationException | ResourceNotFoundException | ContainerStartException e) {
                         log.error(e.getMessage());
                         Platform.runLater(() -> {

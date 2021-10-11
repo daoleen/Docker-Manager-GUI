@@ -18,4 +18,9 @@ public class DockerVolumeMapping {
     public String toString() {
         return String.format("%s:%s", hostVolumePath, containerVolumePath);
     }
+
+
+    public DockerVolumeMapping copy() {
+        return new DockerVolumeMapping(hostVolumePath, containerVolumePath);
+    }
 }
