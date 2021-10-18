@@ -24,11 +24,11 @@ public class DockerContainerRunner {
     }
 
 
-    public void startService(DockerService dockerService, String version, DockerDepend dependOfMe)
+    public void startService(DockerService dockerService, String version, DockerDepend dependOfMe, boolean startIndependently)
             throws ApplicationException, ContainerStartException, ResourceNotFoundException
     {
-        // starting all depends first
-        if (CollectionUtils.isNotEmpty(dockerService.getDepends())) {
+        // starting all depends first if startIndependently is false and there are services on which that service depends
+        if (!startIndependently && CollectionUtils.isNotEmpty(dockerService.getDepends())) {
             for (DockerDepend dockerDepend : dockerService.getDepends()) {
                 DockerServiceDescription serviceDescription = null;
                 try {
@@ -41,13 +41,23 @@ public class DockerContainerRunner {
                     throw new ApplicationException(String.format("Could not start service %s because it has no any version", serviceDescription.getService().getName()));
                 }
 
-                startService(serviceDescription.getService(), serviceDescription.getVersions().get(serviceDescription.getVersions().size() - 1), dockerDepend);
+                startService(serviceDescription.getService(), serviceDescription.getVersions().get(serviceDescription.getVersions().size() - 1), dockerDepend, startIndependently);
             }
         }
 
         String containerId;
         Context.HOST_STATUS_OBSERVABLE.notifyObservers("Starting service " + dockerService.getName());
         Optional<DockerContainer> container = dockerContainerService.getByName(dockerService.getName());
+
+        if (startIndependently && !dockerService.getLinks().isEmpty()) {
+            dockerService = dockerService.copy();
+            dockerService.getLinks().clear();
+
+            if (container.isPresent()) {
+                dockerContainerService.remove(container.get().getId());
+                container = Optional.empty();
+            }
+        }
 
         if (container.isPresent()) {
             containerId = container.get().getId();

@@ -31,4 +31,9 @@ public class DockerDepend {
         }
         return String.format("%s (%s)", name, condition);
     }
+
+
+    public DockerDepend copy() {
+        return new DockerDepend(serviceId, condition);
+    }
 }

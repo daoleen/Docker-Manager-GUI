@@ -59,15 +59,24 @@ public class DockerContainerServiceImpl implements DockerContainerService {
         if (CollectionUtils.isNotEmpty(dockerService.getVolumes())) {
             List<Bind> volumeBindings = dockerService.getVolumes().stream()
                     .map(dockerVolumeMapping -> {
-                        final String[] containerVolumePath = {dockerVolumeMapping.getContainerVolumePath()};
+                        final String[] hostVolumePath = { dockerVolumeMapping.getHostVolumePath() };
+                        final String[] containerVolumePath = { dockerVolumeMapping.getContainerVolumePath() };
+
+                        if (hostVolumePath[0].contains("#{")) {
+                            // host volume name contains HostVariable
+                            host.getHostVariables().forEach(hostVariable -> {
+                                hostVolumePath[0] = hostVolumePath[0].replace(hostVariable.getVariable(), hostVariable.getValue());
+                            });
+                        }
+
                         if (containerVolumePath[0].contains("#{")) {
-                            // value contains HostVariable
+                            // container volume value contains HostVariable
                             host.getHostVariables().forEach(hostVariable -> {
                                 containerVolumePath[0] = containerVolumePath[0].replace(hostVariable.getVariable(), hostVariable.getValue());
                             });
                         }
 
-                        return new Bind(dockerVolumeMapping.getHostVolumePath(), new Volume(containerVolumePath[0]));
+                        return new Bind(hostVolumePath[0], new Volume(containerVolumePath[0]));
                     })
                     .collect(Collectors.toList());
 
@@ -198,16 +207,17 @@ public class DockerContainerServiceImpl implements DockerContainerService {
 
     @Override
     public List<DockerContainer> getContainers(boolean showHidden) {
-        ListContainersCmd listContainersCmd = dockerClient.listContainersCmd();
+        try (ListContainersCmd listContainersCmd = dockerClient.listContainersCmd()) {
 
-        if (showHidden) {
-            listContainersCmd.withShowAll(true);
+            if (showHidden) {
+                listContainersCmd.withShowAll(true);
+            }
+
+            return listContainersCmd.exec().stream()
+                    .map(container -> new DockerContainer(container.getId(), container.getImage(), container.getNames(),
+                            container.getState(), container.getStatus()))
+                    .collect(Collectors.toList());
         }
-
-        return listContainersCmd.exec().stream()
-                .map(container -> new DockerContainer(container.getId(), container.getImage(), container.getNames(),
-                        container.getState(), container.getStatus()))
-                .collect(Collectors.toList());
     }
 
 
