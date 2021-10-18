@@ -1,9 +1,7 @@
 package me.sunny.generator.docker.domain;
 
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.*;
@@ -52,5 +50,12 @@ public class Project {
             }
             return null;
         }).collect(Collectors.toSet());
+    }
+
+
+    public List<Composition> getSortedCompositionsList() {
+        return compositions.stream()
+                .sorted(Comparator.comparing(Composition::getName))
+                .collect(Collectors.toList());
     }
 }

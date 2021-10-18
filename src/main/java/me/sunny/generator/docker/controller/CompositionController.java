@@ -140,7 +140,7 @@ public class CompositionController {
     private void initSelCompositions() {
         ArrayList<Composition> compositions = new ArrayList<>(Context.project.getCompositions().size() + 1);
         compositions.add(emptyComposition);
-        compositions.addAll(Context.project.getCompositions());
+        compositions.addAll(Context.project.getSortedCompositionsList());
         this.compositions = FXCollections.observableList(compositions);
 
         selComposition.setItems(this.compositions);
