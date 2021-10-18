@@ -99,7 +99,7 @@ public class HostController {
     public void init(Host host) {
         this.host = host;
         lblTitle.setText(String.format("Host %s overview", host.getAddress()));
-        listAvailableCompositions.setItems(FXCollections.observableArrayList(Context.project.getCompositions()));
+        listAvailableCompositions.setItems(FXCollections.observableArrayList(Context.project.getSortedCompositionsList()));
 
         initDocker();
         initHostStatusObserver();
