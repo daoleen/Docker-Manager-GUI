@@ -126,9 +126,7 @@ public class DockerContainerServiceImpl implements DockerContainerService {
             createContainerCmd.withHealthcheck(healthCheck);
         }
 
-        if (!hasImageOnHost(imageVersion)) {
-            pullImage(imageVersion);
-        }
+        pullImage(imageVersion);
 
         CreateContainerResponse containerResponse;
         try {
@@ -295,11 +293,16 @@ public class DockerContainerServiceImpl implements DockerContainerService {
                 .withShowAll(true)
                 .exec();
 
-        if (CollectionUtils.isEmpty(images)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(images.get(0));
+        return images.stream()
+                .filter(image -> {
+                    for (String tag : image.getRepoTags()) {
+                        if (tag.equalsIgnoreCase(name)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                .findFirst();
     }
 
 
