@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'me.sunny'
-version '0.22.1-SNAPSHOT'
+version '1.0.0-RELEASE'
 
 sourceCompatibility = 1.8
 
