@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.sunny.generator.docker.controller.RegistryManagementController">
+   <children>
+      <Label layoutX="254.0" layoutY="14.0" text="Registry Management">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+
+      <HBox>
+         <VBox>
+            <Label layoutX="14.0" layoutY="14.0" text="Registry host:" />
+            <TextField fx:id="txtRegistryHost" promptText="Registry host" />
+         </VBox>
+
+         <VBox prefWidth="157.0">
+            <Label layoutX="14.0" layoutY="14.0" text="Registry username:" />
+            <TextField fx:id="txtRegistryUsername" promptText="Registry username" />
+            <HBox.margin>
+               <Insets left="15.0" right="15.0" />
+            </HBox.margin>
+         </VBox>
+
+         <VBox>
+            <Label layoutX="14.0" layoutY="14.0" text="Registry password:" />
+            <TextField fx:id="txtRegistryPassword" prefHeight="24.0" prefWidth="163.0" promptText="Registry password" />
+         </VBox>
+         <Button fx:id="btnLoadServices" mnemonicParsing="false" onAction="#loadServices" text="Load">
+            <HBox.margin>
+               <Insets left="20.0" />
+            </HBox.margin>
+         </Button>
+         
+      </HBox>
+      <ComboBox fx:id="chkAvailableServices" onAction="#onImageSelected" prefHeight="24.0" prefWidth="299.0" promptText="Available images">
+         <VBox.margin>
+            <Insets top="5.0" />
+         </VBox.margin>
+      </ComboBox>
+      <TableView fx:id="tblImageTags" prefHeight="298.0" prefWidth="590.0">
+        <columns>
+          <TableColumn fx:id="tblImageTagsColVersion" prefWidth="436.0" text="Version" />
+          <TableColumn fx:id="tblImageTagsColAction" minWidth="0.0" prefWidth="152.0" text="Action" />
+        </columns>
+         <VBox.margin>
+            <Insets top="5.0" />
+         </VBox.margin>
+      </TableView>
+   </children>
+   <padding>
+      <Insets left="5.0" right="5.0" />
+   </padding>
+</VBox>

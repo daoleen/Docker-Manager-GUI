@@ -290,6 +290,27 @@ public class MainController {
     }
 
 
+    public void registryManagement(ActionEvent actionEvent) {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("registry/registry-management.fxml"));
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Registry management");
+        Window sourceWindow = lblProjectName.getScene().getWindow();
+        stage.setX(sourceWindow.getX());
+        stage.setY(sourceWindow.getY());
+
+        try {
+            stage.setScene(new Scene(fxmlLoader.load()));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            Context.showNotificationDialog("Error creating a registry management window", e.getMessage(), Alert.AlertType.ERROR);
+            return;
+        }
+
+        stage.showAndWait();
+    }
+
+
     public void updateSelectedHost(ActionEvent actionEvent) {
         Host host = listHosts.getSelectionModel().getSelectedItem();
 

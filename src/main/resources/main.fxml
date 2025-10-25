@@ -27,6 +27,7 @@
                <Menu mnemonicParsing="false" text="Host">
                    <items>
                        <MenuItem mnemonicParsing="false" onAction="#addNewHost" text="Add a new host" />
+                       <MenuItem mnemonicParsing="false" onAction="#registryManagement" text="Registry management" />
                    </items>
                </Menu>
                <Menu mnemonicParsing="false" text="Help">
