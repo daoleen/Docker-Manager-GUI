@@ -61,6 +61,7 @@ public class DockerContainerServiceImpl implements DockerContainerService {
                     .map(dockerVolumeMapping -> {
                         final String[] hostVolumePath = { dockerVolumeMapping.getHostVolumePath() };
                         final String[] containerVolumePath = { dockerVolumeMapping.getContainerVolumePath() };
+                        AccessMode accessMode = AccessMode.DEFAULT;
 
                         if (hostVolumePath[0].contains("#{")) {
                             // host volume name contains HostVariable
@@ -76,7 +77,17 @@ public class DockerContainerServiceImpl implements DockerContainerService {
                             });
                         }
 
-                        return new Bind(hostVolumePath[0], new Volume(containerVolumePath[0]));
+                        if (containerVolumePath[0].endsWith(":rw")) {
+                            accessMode = AccessMode.rw;
+                            containerVolumePath[0] = containerVolumePath[0].replace(":ro", "");
+                        }
+
+                        if (containerVolumePath[0].endsWith(":ro")) {
+                            accessMode = AccessMode.ro;
+                            containerVolumePath[0] = containerVolumePath[0].replace(":ro", "");
+                        }
+
+                        return new Bind(hostVolumePath[0], new Volume(containerVolumePath[0]), accessMode);
                     })
                     .collect(Collectors.toList());
 
